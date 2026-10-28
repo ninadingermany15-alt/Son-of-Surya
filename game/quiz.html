@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kaun Banega Solar Hero · Son of Surya Games</title>
+<meta name="description" content="A solar quiz show with a host, a hot seat, a live audience, lifelines and a 15-step prize ladder. New questions every game.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="shared.css">
+<style>
+:root{ --night:#0B0A12; --navy:#1E1B1A; --sun:#D77804; --gold:#FFD36B; --ink:#F5F2EC; --muted:#B9B2C8; --line:#3B3550; --good:#10B981; --bad:#FF6B6B; --bar:#120F2A;
+  --display:'Outfit', system-ui, sans-serif; --body:'DM Sans', system-ui, sans-serif; color-scheme:dark }
+*{box-sizing:border-box}
+body{margin:0; background:radial-gradient(ellipse at top, #241B3A, var(--night) 65%); color:var(--ink); font-family:var(--body)}
+.wrap{max-width:1180px; margin:0 auto; padding:12px max(12px, env(safe-area-inset-right,0px)) 30px max(12px, env(safe-area-inset-left,0px))}
+.top{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:10px}
+.top h1{font:800 22px var(--display); margin:0 auto 0 0} .top h1 b{color:var(--gold)}
+.tb{all:unset; cursor:pointer; font:600 14px var(--display); padding:9px 14px; border-radius:999px; background:#1D1830; border:1px solid var(--line)}
+.tb:focus-visible,.opt:focus-visible,.life button:focus-visible,.btn:focus-visible{outline:3px solid #fff; outline-offset:2px}
+.show{display:grid; grid-template-columns:minmax(0,1fr) 220px; gap:12px}
+@media (max-width:860px){ .show{grid-template-columns:minmax(0,1fr)} .ladder{order:3} }
+.studio{position:relative; aspect-ratio:16/8; border-radius:18px; overflow:hidden; background:#000; box-shadow:0 30px 60px -30px #000}
+.studio canvas{position:absolute; inset:0; width:100%; height:100%}
+.screen{position:absolute; inset:0; display:grid; place-items:center; z-index:5; background:rgba(8,6,18,.6); padding:14px}
+.screen[hidden]{display:none}
+.card{background:rgba(22,18,40,.94); border:1px solid var(--line); border-radius:18px; padding:20px; max-width:560px; width:100%; text-align:center}
+.card h2{font:800 clamp(22px,3.6vw,36px)/1.05 var(--display); margin:0} .card h2 em{font-style:normal; color:var(--gold)}
+.card p{color:var(--muted); margin:10px 0 0}
+.btn{font:700 15px var(--display); border:0; border-radius:12px; padding:12px 20px; cursor:pointer; background:var(--gold); color:#1E1B1A; margin:14px 4px 0}
+.btn.alt{background:rgba(255,255,255,.1); color:#fff; border:1px solid rgba(255,255,255,.2)}
+.namefield{display:grid; gap:4px; margin-top:12px; text-align:left; font:600 13px var(--display)} .namefield input{font:16px var(--body); padding:10px 12px; border-radius:10px; border:1.5px solid var(--line); background:#1D1830; color:#fff}
+/* question and answer bars */
+.board{margin-top:12px}
+.qtop{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:center}
+.chip{font:600 13px var(--display); background:#1D1830; border:1px solid var(--line); padding:6px 12px; border-radius:999px} .chip b{color:var(--gold)}
+.timer{position:relative; width:64px; height:64px; margin:0 auto -8px; z-index:2}
+.timer svg{width:100%; height:100%; transform:rotate(-90deg)} .timer span{position:absolute; inset:0; display:grid; place-items:center; font:800 22px var(--display)}
+.bar{position:relative; background:linear-gradient(180deg,#1B1640,#0E0B24); border:2px solid #8C7A3A; color:#fff; clip-path:polygon(22px 0,calc(100% - 22px) 0,100% 50%,calc(100% - 22px) 100%,22px 100%,0 50%); padding:14px 40px}
+.q{font:600 clamp(17px,2.3vw,23px)/1.4 var(--display); text-align:center; margin-top:4px; min-height:70px; display:grid; place-items:center}
+.opts{display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; margin-top:12px}
+@media (max-width:640px){ .opts{grid-template-columns:1fr} .bar{padding:10px 30px} }
+.opt{all:unset; box-sizing:border-box; cursor:pointer; display:flex; gap:10px; align-items:center; font:600 16px var(--display); background:linear-gradient(180deg,#1B1640,#0E0B24); color:#fff; clip-path:polygon(18px 0,calc(100% - 18px) 0,100% 50%,calc(100% - 18px) 100%,18px 100%,0 50%); padding:13px 34px; box-shadow:inset 0 0 0 2px #8C7A3A; min-height:50px}
+.opt b{color:var(--gold)}
+.opt:hover{box-shadow:inset 0 0 0 2px var(--gold)}
+.opt.sel{background:linear-gradient(180deg,#B8860B,#7A5A05); border-color:var(--gold); color:#fff} .opt.sel b{color:#fff}
+.opt.ok{background:linear-gradient(180deg,#14A06F,#0B6B49); border-color:#7CF0C4}
+.opt.no{background:linear-gradient(180deg,#B33A3A,#7A2020)}
+.opt.gone{visibility:hidden}
+.life{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; justify-content:center}
+.life button{all:unset; cursor:pointer; font:600 13px var(--display); padding:8px 14px; border-radius:999px; border:1.5px solid #8C7A3A; background:#1D1830}
+.life button:disabled{opacity:.35; cursor:not-allowed; text-decoration:line-through}
+.explain{margin-top:12px; color:var(--muted); font-size:15px; min-height:24px; text-align:center}
+.ladder{background:linear-gradient(180deg,#1B1640,#0E0B24); border:1px solid var(--line); border-radius:18px; padding:10px; display:flex; flex-direction:column-reverse; gap:3px; font:600 14px var(--display); font-variant-numeric:tabular-nums; align-self:start}
+.ladder div{padding:5px 10px; border-radius:8px; display:flex; justify-content:space-between; color:var(--muted)}
+.ladder div.safe{color:#fff} .ladder div.on{background:var(--gold); color:#1E1B1A} .ladder div.won{color:var(--good)}
+.small{font-size:12px; color:var(--muted)}
+@media (prefers-reduced-motion: reduce){ *{transition:none!important} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <h1>Kaun Banega <b>Solar Hero</b></h1>
+    <button class="tb" id="lang" type="button" aria-label="Language">🌐 English · <b>हिन्दी</b></button>
+    <button class="tb" id="voice" type="button" aria-pressed="true">🗣 Host voice on</button>
+    <button class="tb" id="mute" type="button" aria-pressed="true">🔊 Sound on</button>
+  </div>
+  <div class="show">
+    <div>
+      <div class="studio" id="studio"><canvas id="cv" width="1600" height="800" aria-label="Quiz show studio with the host, the hot seat and the audience" role="img"></canvas>
+        <div class="screen" id="intro"><div class="card">
+          <div class="small" data-t="presents" style="letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-family:var(--display);font-weight:600">Son of Surya presents</div>
+          <h2>Kaun Banega <em>Solar Hero</em></h2>
+          <p data-t="introP">Take the hot seat. 15 questions, 4 lifelines, two safe levels and up to 10,00,000 Solar Cells. New questions every game.</p>
+          <div class="ss-tabs" role="group" aria-label="Language" style="justify-content:center;display:flex"><button type="button" id="lEn" aria-pressed="true">English</button><button type="button" id="lHi" aria-pressed="false">हिन्दी</button></div>
+          <label class="namefield" for="pname"><span data-t="nameL">Your name in the hot seat</span><input id="pname" maxlength="20"></label>
+          <button class="btn" id="go" type="button" data-t="go">Take the hot seat</button>
+          <p class="small" data-t="voiceNote">The host speaks with your browser's built-in voice. You can switch voice or sound off at the top.</p><p class="small" id="hiNote" hidden></p>
+        </div></div>
+      </div>
+      <div class="board" id="board" hidden>
+        <div class="qtop"><span class="chip" id="qnum">Question 1 of 15</span><span class="chip" id="qlevel">Easy</span><span class="chip"><span data-t="playFor">Playing for</span> <b id="qfor">100</b> <span data-t="cells">Solar Cells</span></span></div>
+        <div class="timer" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" stroke="#2A2450" stroke-width="6" fill="#120F2A"/><circle id="tring" cx="32" cy="32" r="28" stroke="#FFD36B" stroke-width="6" fill="none" stroke-dasharray="176" stroke-dashoffset="0" stroke-linecap="round"/></svg><span id="tnum">30</span></div>
+        <div class="bar q" id="qtext">…</div>
+        <div class="opts" id="qopts"></div>
+        <div class="life">
+          <button id="l50" type="button">50 : 50</button>
+          <button id="lpoll" type="button" data-t="poll">Audience poll</button>
+          <button id="lask" type="button" data-t="ask">Ask the expert</button>
+          <button id="lflip" type="button" data-t="flip">Flip the question</button>
+          <button id="lquit" type="button" data-t="quit">Quit with my cells</button>
+        </div>
+        <div class="explain" id="qexp" aria-live="polite"></div>
+        <div style="text-align:center"><button class="btn" id="qnext" type="button" hidden>Next question</button></div>
+      </div>
+    </div>
+    <div class="ladder" id="ladder" aria-label="Prize ladder"></div>
+  </div>
+</div>
+<script src="account.js"></script>
+<script src="quiz-bank.js"></script>
+<script>
+(()=>{
+SS.mountHeader('quiz');
+const $=id=>document.getElementById(id), BANK=window.QB_BANK, GEN=window.QB_GEN, LADDER=window.QB_LADDER, SAFE=[4,9];
+const T={
+ en:{presents:'Son of Surya presents',introP:'Take the hot seat. 15 questions, 4 lifelines, two safe levels and up to 10,00,000 Solar Cells. New questions every game.',nameL:'Your name in the hot seat',go:'Take the hot seat',voiceNote:"The host speaks with your browser's built-in voice. You can switch voice or sound off at the top.",playFor:'Playing for',cells:'Solar Cells',poll:'Audience poll',ask:'Ask the expert',flip:'Flip the question',quit:'Quit with my cells',
+  q:(i)=>'Question '+i+' of 15',lv:['','Easy','Medium','Hard'],next:'Next question',again:'Play again (new questions)',correct:'Correct! ',wrongIs:(a)=>'Wrong answer. The right answer is '+a+'. ',timeUp:'Time is up.',leave:(n)=>' You leave with '+n+' Solar Cells.',safe:' Safe level reached: these cells are yours.',
+  hero:'SOLAR HERO! You won 10,00,000 Solar Cells. ',walk:(n)=>'You walk away with '+n+' Solar Cells. Well played!',expert:(g,s)=>'Expert, solar engineer: "I think it is '+g+'. '+(s?'I am quite sure."':'But I am not certain."'),host:'Host · Suryadev',welcome:(n)=>'Welcome, '+n,
+  prize:(i,c)=>'Question '+i+' · '+c+' Solar Cells',heroP:'SOLAR HERO · 10,00,000',pollT:'Audience poll',
+  say:{welcome:(n)=>'Good evening and welcome to Kaun Banega Solar Hero! Tonight in the hot seat: '+n+'! Fifteen questions stand between you and one million Solar Cells. Shall we begin?',first:(c)=>'Your first question, for '+c+' Solar Cells. ',safe:'This is a safe level. ',next:(c)=>'Next question, for '+c+' Solar Cells. ',opts:'Your options: ',locked:(o)=>'You have chosen '+o+'. Final answer? Locked in. Let us see…',right:'That is the right answer! ',hero:'Congratulations! You are the Solar Hero of India!',home:(n)=>' You take home '+n+' Solar Cells.',fifty:'The computer has removed two wrong answers.',poll:'Audience, please vote now.',expert:(g)=>'Our expert says: I think it is '+g,quit:(n)=>'Smart move. You take home '+n+' Solar Cells.'}},
+ hi:{presents:'सन ऑफ़ सूर्य प्रस्तुत करता है',introP:'हॉट सीट पर बैठिए। 15 सवाल, 4 लाइफ़लाइन, दो सुरक्षित पड़ाव और 10,00,000 सोलर सेल तक का इनाम। हर बार नए सवाल।',nameL:'हॉट सीट पर आपका नाम',go:'हॉट सीट पर बैठें',voiceNote:'होस्ट आपके ब्राउज़र की आवाज़ में बोलते हैं। ऊपर से आवाज़ या साउंड बंद कर सकते हैं।',playFor:'इनाम',cells:'सोलर सेल',poll:'दर्शकों की राय',ask:'विशेषज्ञ से पूछें',flip:'सवाल बदलें',quit:'इनाम लेकर खेल छोड़ें',
+  q:(i)=>'सवाल '+i+' / 15',lv:['','आसान','मध्यम','कठिन'],next:'अगला सवाल',again:'फिर से खेलें (नए सवाल)',correct:'सही जवाब! ',wrongIs:(a)=>'गलत जवाब। सही जवाब है '+a+'। ',timeUp:'समय समाप्त।',leave:(n)=>' आप '+n+' सोलर सेल लेकर जा रहे हैं।',safe:' सुरक्षित पड़ाव: ये सेल अब आपके हैं।',
+  hero:'सोलर हीरो! आपने 10,00,000 सोलर सेल जीते। ',walk:(n)=>'आप '+n+' सोलर सेल लेकर जा रहे हैं। बहुत खूब!',expert:(g,s)=>'विशेषज्ञ, सोलर इंजीनियर: "मुझे लगता है '+g+'। '+(s?'मुझे पूरा यकीन है।"':'पर पक्का नहीं कह सकता।"'),host:'होस्ट · सूर्यदेव',welcome:(n)=>'स्वागत है, '+n,
+  prize:(i,c)=>'सवाल '+i+' · '+c+' सोलर सेल',heroP:'सोलर हीरो · 10,00,000',pollT:'दर्शकों की राय',
+  say:{welcome:(n)=>'नमस्कार, और स्वागत है कौन बनेगा सोलर हीरो में! आज हॉट सीट पर हैं '+n+'! दस लाख सोलर सेल और आपके बीच हैं पंद्रह सवाल। तो चलिए शुरू करते हैं!',first:(c)=>'पहला सवाल, '+c+' सोलर सेल के लिए। ',safe:'यह सुरक्षित पड़ाव है। ',next:(c)=>'अगला सवाल, '+c+' सोलर सेल के लिए। ',opts:'आपके विकल्प हैं: ',locked:(o)=>'आपने चुना '+o+'। पक्का? लॉक कर दिया। देखते हैं…',right:'बिल्कुल सही जवाब! ',hero:'बधाई हो! आप हैं भारत के सोलर हीरो!',home:(n)=>' आप '+n+' सोलर सेल घर ले जा रहे हैं।',fifty:'कंप्यूटर ने दो गलत जवाब हटा दिए हैं।',poll:'दर्शकों, अब अपना वोट दीजिए।',expert:(g)=>'हमारे विशेषज्ञ कहते हैं: मुझे लगता है '+g,quit:(n)=>'समझदारी भरा फ़ैसला। आप '+n+' सोलर सेल घर ले जा रहे हैं।'}}
+};
+let LANG=(()=>{ try{ return localStorage.getItem('kbsh-lang')||'en'; }catch(e){ return 'en'; } })();
+const tr=()=>T[LANG];
+const store={ get(k,d){ try{ const v=localStorage.getItem(k); return v==null?d:JSON.parse(v);}catch(e){ return d; } }, set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} } };
+$('pname').value=SS.signedIn()?SS.me().name:'';
+/* ===================== SOUND (on by default; starts with the first tap) ===================== */
+let AC=null, MG=null, on=true, VOICE=true, drone=null;
+function ac(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); MG=AC.createGain(); MG.gain.value=.55; MG.connect(AC.destination);}catch(e){} } if(AC&&AC.resume) AC.resume(); return AC; }
+function tn(f,d=.15,type='sine',v=.2,w=0){ if(!AC||!on) return; const t=AC.currentTime+w,o=AC.createOscillator(),g=AC.createGain(); o.type=type; o.frequency.setValueAtTime(f,t); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(v,t+.02); g.gain.exponentialRampToValueAtTime(.0001,t+d); o.connect(g); g.connect(MG); o.start(t); o.stop(t+d+.05); }
+function noise(d,v,f0,w=0,q=.7){ if(!AC||!on) return; const b=AC.createBuffer(1,AC.sampleRate*d,AC.sampleRate), a=b.getChannelData(0); for(let i=0;i<a.length;i++) a[i]=(Math.random()*2-1); const s=AC.createBufferSource(), g=AC.createGain(), f=AC.createBiquadFilter(); f.type='bandpass'; f.frequency.value=f0; f.Q.value=q; s.buffer=b; const t=AC.currentTime+w; g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(v,t+d*.2); g.gain.exponentialRampToValueAtTime(.0001,t+d); s.connect(f); f.connect(g); g.connect(MG); s.start(t); }
+function clap(n=40,dur=2.4){ if(!AC||!on) return; for(let i=0;i<n;i++) noise(.05,.25*Math.random()+.05,1800+Math.random()*1600,Math.random()*dur,1.5); noise(dur,.08,1200,0,.4); }
+function boom(w=0){ tn(55,.9,'sine',.35,w); noise(.5,.2,120,w); }
+const sfx={
+ theme:()=>{ boom(0); const ch=[[196,247,294],[220,277,330],[247,311,370],[262,330,392]]; ch.forEach((c,i)=>c.forEach(f=>{ tn(f,.9,'sawtooth',.045,i*.45); tn(f*2,.9,'triangle',.04,i*.45); })); [784,988,1175,1568].forEach((f,i)=>tn(f,.5,'triangle',.08,1.8+i*.12)); boom(1.8); setTimeout(()=>clap(60,2.8),1900); },
+ lock:()=>{ boom(); tn(330,.8,'sine',.12,.05); tn(415,.8,'sine',.1,.1); },
+ suspense:()=>{ stopDrone(); if(!AC||!on) return; const o=AC.createOscillator(), o2=AC.createOscillator(), g=AC.createGain(); o.type='sawtooth'; o2.type='sine'; o.frequency.value=82; o2.frequency.value=123; g.gain.value=.0001; g.gain.exponentialRampToValueAtTime(.06,AC.currentTime+.6); o.connect(g); o2.connect(g); g.connect(MG); o.start(); o2.start(); drone={o,o2,g}; for(let i=0;i<4;i++){ tn(60,.18,'sine',.3,.3+i*.6); tn(60,.14,'sine',.22,.48+i*.6); } },
+ ok:()=>{ stopDrone(); [523,659,784,1046].forEach((f,i)=>{ tn(f,.4,'triangle',.15,i*.09); tn(f/2,.4,'square',.04,i*.09); }); setTimeout(()=>clap(50,2.2),300); },
+ no:()=>{ stopDrone(); [392,370,349,330].forEach((f,i)=>tn(f,.5,'sawtooth',.08,i*.22)); noise(1.4,.12,500,.2); },
+ tick:()=>tn(1300,.04,'square',.04),
+ big:()=>{ [523,659,784,1046,1318,1568].forEach((f,i)=>tn(f,.6,'triangle',.16,i*.14)); boom(.9); setTimeout(()=>clap(90,4),700); }
+};
+function stopDrone(){ if(drone){ try{ drone.g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+.2); drone.o.stop(AC.currentTime+.25); drone.o2.stop(AC.currentTime+.25);}catch(e){} drone=null; } }
+$('mute').onclick=()=>{ ac(); on=!on; $('mute').setAttribute('aria-pressed',on); if(!on) stopDrone(); applyLang(); };
+$('voice').onclick=()=>{ VOICE=!VOICE; $('voice').setAttribute('aria-pressed',VOICE); if(!VOICE&&window.speechSynthesis) speechSynthesis.cancel(); applyLang(); };
+/* host voice: the deepest male Indian-English (or Hindi) voice the browser has */
+function hostVoice(){ const vs=(window.speechSynthesis&&speechSynthesis.getVoices())||[]; let p;
+  if(LANG==='hi'){ p=vs.filter(v=>/^hi/i.test(v.lang)); if(!p.length) return null; }
+  else { const en=vs.filter(v=>/^en/i.test(v.lang)); const pref=en.filter(v=>/en-(IN|GB|US)/i.test(v.lang)); p=pref.length?pref:en; }
+  return p.find(v=>/(^|\W)male|rishi|hemant|prabhat|ravi|madhur|aarav|daniel|david/i.test(v.name)&&!/female/i.test(v.name))||p[0]||null; }
+let talking=0;
+function say(text,after){ if(!VOICE||!window.speechSynthesis){ after&&setTimeout(after,600); return; } try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text.replace(/₹/g,' rupees ').replace(/·/g,',')); const v=hostVoice(); if(v){u.voice=v;u.lang=v.lang;} else u.lang=LANG==='hi'?'hi-IN':'en-IN'; u.pitch=.82; u.rate=.95; u.onstart=()=>talking=1; u.onend=()=>{ talking=0; after&&after(); }; u.onerror=()=>{ talking=0; after&&after(); }; speechSynthesis.speak(u);}catch(e){ after&&after(); } }
+try{ speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged=()=>{}; }catch(e){}
+/* ===================== STUDIO (canvas) ===================== */
+const cv=$('cv'), X=cv.getContext('2d'), W=1600, H=800; let t0=performance.now(); const AUD=[]; for(let r=0;r<3;r++) for(let i=0;i<26;i++) AUD.push({x:40+i*60+(r%2)*30, y:640+r*55, s:.9+r*.12, c:['#3B2E5A','#4A3A6E','#2E2448','#5A4A7E'][(i+r)%4], ph:Math.random()*6});
+let cheer=0, mood='idle', poll=null, playerName='You', prize='0';
+function rr(x,y,w,h,r){ X.beginPath(); X.moveTo(x+r,y); X.arcTo(x+w,y,x+w,y+h,r); X.arcTo(x+w,y+h,x,y+h,r); X.arcTo(x,y+h,x,y,r); X.arcTo(x,y,x+w,y,r); X.closePath(); }
+function person(x,y,s,o){ X.save(); X.translate(x,y); X.scale(s,s);
+  X.fillStyle=o.suit; rr(-46,-150,92,120,26); X.fill(); X.fillStyle=o.shirt; X.beginPath(); X.moveTo(-14,-150); X.lineTo(14,-150); X.lineTo(0,-110); X.fill(); if(o.tie){ X.fillStyle=o.tie; X.beginPath(); X.moveTo(-5,-146); X.lineTo(5,-146); X.lineTo(8,-104); X.lineTo(0,-96); X.lineTo(-8,-104); X.fill(); }
+  X.fillStyle=o.skin; X.fillRect(-11,-172,22,24); X.beginPath(); X.ellipse(0,-196,30,36,0,0,7); X.fill();
+  X.fillStyle=o.hair; X.beginPath(); X.ellipse(0,-214,32,22,0,Math.PI,0); X.fill(); if(o.beard){ X.beginPath(); X.ellipse(0,-176,24,16,0,0,Math.PI); X.fill(); X.fillStyle=o.skin; X.beginPath(); X.ellipse(0,-186,16,8,0,0,Math.PI); X.fill(); }
+  if(o.glasses){ X.strokeStyle='#111'; X.lineWidth=3; X.strokeRect(-22,-206,17,12); X.strokeRect(5,-206,17,12); X.beginPath(); X.moveTo(-5,-200); X.lineTo(5,-200); X.stroke(); }
+  X.fillStyle='#1a1a1a'; X.beginPath(); X.arc(-11,-198,3,0,7); X.arc(11,-198,3,0,7); X.fill();
+  const m=o.mouth||0; X.fillStyle='#5a1f1f'; X.beginPath(); X.ellipse(0,-178,8,1.5+m*6,0,0,7); X.fill();
+  X.fillStyle=o.suit; X.save(); X.translate(-46,-140); X.rotate(o.armL||.15); rr(-12,0,24,90,12); X.fill(); X.fillStyle=o.skin; X.beginPath(); X.arc(0,94,11,0,7); X.fill(); X.restore();
+  X.fillStyle=o.suit; X.save(); X.translate(46,-140); X.rotate(o.armR||-.15); rr(-12,0,24,90,12); X.fill(); X.fillStyle=o.skin; X.beginPath(); X.arc(0,94,11,0,7); X.fill(); X.restore();
+  X.restore(); }
+function chair(x,y,flip){ X.save(); X.translate(x,y); X.scale(flip?-1:1,1); X.fillStyle='#C9CDD6'; X.fillRect(-4,-60,8,90); X.beginPath(); X.ellipse(0,32,48,10,0,0,7); X.fill(); X.fillStyle='#2C2450'; rr(-50,-100,100,40,16); X.fill(); X.fillStyle='#3A3170'; rr(30,-210,24,120,10); X.fill(); X.restore(); }
+function draw(now){ const t=(now-t0)/1000; X.clearRect(0,0,W,H);
+  const bg=X.createRadialGradient(W/2,260,40,W/2,300,W*.75); bg.addColorStop(0,'#2A1F5A'); bg.addColorStop(.55,'#120E2E'); bg.addColorStop(1,'#05040C'); X.fillStyle=bg; X.fillRect(0,0,W,H);
+  // LED back wall: rings around the logo
+  for(let i=0;i<9;i++){ X.strokeStyle='rgba(255,211,107,'+(.05+.05*Math.sin(t*2+i))+')'; X.lineWidth=3; X.beginPath(); X.arc(W/2,200,70+i*34,0,7); X.stroke(); }
+  for(let i=0;i<48;i++){ const a=i/48*Math.PI*2+t*.25; X.fillStyle='rgba(255,211,107,'+(.35+.35*Math.sin(t*4+i))+')'; X.beginPath(); X.arc(W/2+Math.cos(a)*360,200+Math.sin(a)*150,3,0,7); X.fill(); }
+  // big screen
+  X.fillStyle='rgba(10,8,26,.9)'; rr(W/2-230,120,460,160,22); X.fill(); X.strokeStyle='#FFD36B'; X.lineWidth=4; rr(W/2-230,120,460,160,22); X.stroke();
+  X.fillStyle='#FFD36B'; X.textAlign='center'; X.font='800 30px Outfit, sans-serif'; X.fillText(LANG==='hi'?'कौन बनेगा':'KAUN BANEGA',W/2,175); X.font='800 52px Outfit, sans-serif'; X.fillText(LANG==='hi'?'सोलर हीरो':'SOLAR HERO',W/2,232); X.fillStyle='#fff'; X.font='600 22px Outfit, sans-serif'; X.fillText(prize,W/2,266);
+  // spotlights sweeping
+  X.save(); X.globalCompositeOperation='lighter'; for(let i=0;i<4;i++){ const sx=200+i*400, ang=Math.sin(t*.7+i*1.3)*.45; X.save(); X.translate(sx,0); X.rotate(ang); const g=X.createLinearGradient(0,0,0,H); const col=i%2?'255,211,107':'140,120,255'; g.addColorStop(0,'rgba('+col+',.22)'); g.addColorStop(1,'rgba('+col+',0)'); X.fillStyle=g; X.beginPath(); X.moveTo(-10,0); X.lineTo(10,0); X.lineTo(150,H); X.lineTo(-150,H); X.fill(); X.restore(); } X.restore();
+  // stage floor rings
+  X.save(); X.translate(W/2,560); X.scale(1,.26); for(let i=0;i<7;i++){ X.strokeStyle=i%2?'rgba(255,211,107,.55)':'rgba(140,120,255,.5)'; X.lineWidth=6; X.beginPath(); X.arc(0,0,90+i*70,0,7); X.stroke(); } const fl=X.createRadialGradient(0,0,10,0,0,560); fl.addColorStop(0,'rgba(255,211,107,'+(.25+(mood==='tense'?.15*Math.sin(t*6):0))+')'); fl.addColorStop(1,'rgba(255,211,107,0)'); X.fillStyle=fl; X.beginPath(); X.arc(0,0,560,0,7); X.fill(); X.restore();
+  // hot seats: contestant (left), host (right)
+  chair(W/2-210,560,false); chair(W/2+210,560,true);
+  const hostTalk=talking?Math.abs(Math.sin(t*16))*.9:0;
+  person(W/2+210,470,1.05,{suit:'#1C1C24',shirt:'#F4F1E8',tie:'#D77804',skin:'#C68A5E',hair:'#ECECEC',beard:true,glasses:true,mouth:hostTalk,armL:.25+(talking?Math.sin(t*3)*.25:0),armR:-.15});
+  const pc=mood==='happy'?.9:mood==='tense'?.05:.2;
+  person(W/2-210,470,1.0,{suit:'#D77804',shirt:'#1E1B1A',skin:'#B57B52',hair:'#1a1a1a',mouth:mood==='happy'?.8:0,armL:mood==='happy'?-2.4+Math.sin(t*10)*.2:.15,armR:mood==='happy'?2.4-Math.sin(t*10)*.2:mood==='tense'?-.9:-.15});
+  [[playerName,W/2-210],[tr().host,W/2+210]].forEach(([n,x])=>{ X.font='700 22px Outfit, sans-serif'; const w=X.measureText(n).width+28; X.fillStyle='rgba(10,8,26,.85)'; rr(x-w/2,250,w,34,17); X.fill(); X.strokeStyle='#FFD36B'; X.lineWidth=2; rr(x-w/2,250,w,34,17); X.stroke(); X.fillStyle='#FFD36B'; X.fillText(n,x,274); });
+  // host console
+  X.fillStyle='#1B1640'; rr(W/2-60,500,120,60,10); X.fill(); X.fillStyle='rgba(255,211,107,'+(.5+.3*Math.sin(t*3))+')'; X.fillRect(W/2-46,512,92,8);
+  // audience
+  AUD.forEach(a=>{ const up=cheer>0?Math.abs(Math.sin(t*12+a.ph)):0; X.fillStyle=a.c; X.beginPath(); X.arc(a.x,a.y-34*a.s,15*a.s,0,7); X.fill(); rr(a.x-22*a.s,a.y-18*a.s,44*a.s,50*a.s,14); X.fill();
+    if(cheer>0){ X.strokeStyle=a.c; X.lineWidth=7*a.s; X.beginPath(); X.moveTo(a.x-14*a.s,a.y-10*a.s); X.lineTo(a.x-10*a.s,a.y-(40+up*16)*a.s); X.moveTo(a.x+14*a.s,a.y-10*a.s); X.lineTo(a.x+10*a.s,a.y-(40+up*16)*a.s); X.stroke(); } });
+  if(cheer>0) cheer-=1/60;
+  // audience poll overlay
+  if(poll){ X.fillStyle='rgba(10,8,26,.9)'; rr(60,90,300,260,18); X.fill(); X.strokeStyle='#FFD36B'; X.lineWidth=3; rr(60,90,300,260,18); X.stroke(); X.fillStyle='#fff'; X.font='700 20px Outfit, sans-serif'; X.textAlign='left'; X.fillText(tr().pollT,80,124);
+    poll.forEach((p,i)=>{ const h=Math.min(1,(t-poll.t0)/1.5)*p*1.7; X.fillStyle='#FFD36B'; X.fillRect(90+i*66,320-h,40,h); X.fillStyle='#fff'; X.textAlign='center'; X.font='700 18px Outfit, sans-serif'; X.fillText('ABCD'[i],110+i*66,342); X.fillText(Math.round(p)+'%',110+i*66,312-h); }); X.textAlign='center'; }
+  requestAnimationFrame(draw); }
+requestAnimationFrame(draw);
+/* ===================== GAME ===================== */
+const view=q=>{ const d=q[LANG]; return {q:d[0], a:d[1], w:[d[2],d[3],d[4]], x:d[5]}; };
+function applyLang(repaint){ document.documentElement.lang=LANG==='hi'?'hi':'en'; document.querySelectorAll('[data-t]').forEach(el=>{ const v=tr()[el.dataset.t]; if(typeof v==='string') el.textContent=v; });
+  $('lang').innerHTML=LANG==='hi'?'🌐 <b>English</b> · हिन्दी':'🌐 English · <b>हिन्दी</b>'; $('lEn').setAttribute('aria-pressed',LANG==='en'); $('lHi').setAttribute('aria-pressed',LANG==='hi');
+  $('voice').textContent=(LANG==='hi'?'🗣 होस्ट की आवाज़ ':'🗣 Host voice ')+(VOICE?(LANG==='hi'?'चालू':'on'):(LANG==='hi'?'बंद':'off')); $('mute').textContent=(on?'🔊 ':'🔇 ')+(LANG==='hi'?(on?'साउंड चालू':'साउंड बंद'):(on?'Sound on':'Sound off'));
+  const hasHi=((window.speechSynthesis&&speechSynthesis.getVoices())||[]).some(v=>/^hi/i.test(v.lang)); const n=$('hiNote'); n.hidden=!(LANG==='hi'&&!hasHi); n.textContent='इस डिवाइस पर हिन्दी आवाज़ इंस्टॉल नहीं है, इसलिए होस्ट की आवाज़ सुनाई नहीं दे सकती। सवाल हिन्दी में दिखेंगे।';
+  if(repaint&&Q.list.length&&!Q.locked) Q.paint(true); }
+function setLang(l){ LANG=l; try{ localStorage.setItem('kbsh-lang',l); }catch(e){} if(window.speechSynthesis) speechSynthesis.cancel(); applyLang(true); }
+const Q={ list:[], i:0, won:0, locked:true, timer:null, tleft:0, total:30,
+  newGame(){ this.i=0; this.won=0; ['l50','lpoll','lask','lflip'].forEach(id=>$(id).disabled=false); poll=null;
+    const seen=new Set(store.get('kbsh-seen',[]));
+    const pool=lv=>{ const st=BANK.filter(q=>q.lv===lv); const fresh=st.filter(q=>!seen.has(q.en[0])); const base=shuffle(fresh.length>=4?fresh:st); const gens=shuffle(GEN.map(g=>g()).filter(q=>q.lv===lv||lv===2)); return shuffle([...base.slice(0,4),...gens.slice(0,lv===1?1:2)]); };
+    const e=pool(1).slice(0,5), m=pool(2).slice(0,5), h=pool(3); while(h.length<5) h.push(GEN[rnd(0,GEN.length-1)]());
+    this.list=[...e,...m,...h.slice(0,5)].map(q=>({...q, order:shuffle([0,1,2,3])})); this.extra=GEN.map(g=>g()).map(q=>({...q, order:shuffle([0,1,2,3])}));
+    store.set('kbsh-seen',[...seen,...this.list.map(x=>x.en[0])].slice(-40)); this.ladder(); this.show(); },
+  ladder(){ $('ladder').innerHTML=LADDER.map((v,i)=>'<div class="'+(i===this.i?'on':(i<this.i?'won':(SAFE.includes(i)?'safe':'')))+'"><span>'+(i+1)+'</span><span>'+v.toLocaleString('en-IN')+'</span></div>').join(''); },
+  cur(){ const q=this.list[this.i], v=view(q); const all=[v.a,...v.w]; return {q, v, opts:q.order.map(k=>all[k]), right:q.order.indexOf(0)}; },
+  paint(keep){ const {q,v,opts}=this.cur(); $('qnum').textContent=tr().q(this.i+1); $('qlevel').textContent=tr().lv[q.lv]; $('qfor').textContent=LADDER[this.i].toLocaleString('en-IN'); prize=tr().prize(this.i+1,LADDER[this.i].toLocaleString('en-IN'));
+    $('qtext').textContent=v.q; const box=$('qopts'); const gone=keep?[...box.querySelectorAll('.opt')].map(b=>b.classList.contains('gone')):[]; box.innerHTML='';
+    opts.forEach((o,k)=>{ const b=document.createElement('button'); b.className='opt'+(gone[k]?' gone':''); b.type='button'; b.dataset.k=k; b.innerHTML='<b>'+'ABCD'[k]+':</b><span></span>'; b.querySelector('span').textContent=o; b.onclick=()=>this.answer(b,k); box.appendChild(b); });
+    if(keep) this.read(); },
+  read(){ const {v,opts}=this.cur(); const S=tr().say; const intro=this.i===0?S.first(LADDER[0]):(this.i===4||this.i===9)?S.safe+S.next(LADDER[this.i].toLocaleString('en-IN')):S.next(LADDER[this.i].toLocaleString('en-IN'));
+    say(intro+v.q+' '+S.opts+opts.map((o,k)=>'ABCD'[k]+'. '+o).join('. '), ()=>{ if(!this.locked) this.running=true; }); },
+  show(){ this.locked=false; poll=null; mood='idle'; $('qnext').hidden=true; $('qexp').textContent=''; this.paint(false); this.ladder(); this.startTimer(this.list[this.i].lv===3?45:30); this.read(); },
+  startTimer(s){ clearInterval(this.timer); this.tleft=s; this.total=s; this.running=!VOICE; const ring=$('tring');
+    this.timer=setInterval(()=>{ if(!this.running) return; this.tleft-=0.1; ring.style.strokeDashoffset=176*(1-Math.max(0,this.tleft/this.total)); $('tnum').textContent=Math.max(0,Math.ceil(this.tleft)); if(Math.abs(this.tleft-Math.round(this.tleft))<0.05 && this.tleft<8) sfx.tick(); if(this.tleft<=0){ clearInterval(this.timer); this.fail(tr().timeUp+' '); } },100);
+    const me=this.i; setTimeout(()=>{ if(this.i===me) this.running=true; },VOICE?16000:0); },
+  answer(b,k){ if(this.locked) return; this.locked=true; clearInterval(this.timer); b.classList.add('sel'); sfx.lock(); mood='tense'; const {v,opts,right}=this.cur();
+    say(tr().say.locked(opts[k])); sfx.suspense();
+    setTimeout(()=>{ document.querySelector('#qopts .opt[data-k="'+right+'"]').classList.add('ok');
+      if(k===right){ sfx.ok(); cheer=3; mood='happy'; this.won=LADDER[this.i]; $('qexp').textContent=tr().correct+v.x;
+        if(this.i===14){ sfx.big(); cheer=6; $('qexp').textContent=tr().hero+v.x; prize=tr().heroP; say(tr().say.hero); this.finish(); return; }
+        say(tr().say.right+v.x); if(SAFE.includes(this.i)) $('qexp').textContent+=tr().safe;
+        const nb=$('qnext'); nb.hidden=false; nb.textContent=tr().next; nb.onclick=()=>{ this.i++; this.show(); }; }
+      else { b.classList.add('no'); this.fail(tr().wrongIs(v.a)+v.x); } }, 3200); },
+  fail(msg){ sfx.no(); mood='idle'; const safe=SAFE.filter(s=>s<this.i).pop(); const keep=safe!=null?LADDER[safe]:0; this.won=keep; const n=keep.toLocaleString('en-IN'); $('qexp').textContent=msg+tr().leave(n); say(msg+tr().say.home(n)); this.finish(); },
+  finish(){ this.locked=true; clearInterval(this.timer); stopDrone(); SS.record('quiz','best',{score:this.won}); SS.addXP(this.won/2000); if(this.won>=1000000) SS.badge('quiz-hero','Solar Hero'); if(this.won>=32000) SS.badge('quiz-32k','Hot Seat Star');
+    const nb=$('qnext'); nb.hidden=false; nb.textContent=tr().again; nb.onclick=()=>this.newGame(); }
+};
+$('l50').onclick=e=>{ if(Q.locked) return; const {right}=Q.cur(); const wrong=[...document.querySelectorAll('#qopts .opt')].filter(b=>+b.dataset.k!==right); shuffle(wrong).slice(0,2).forEach(b=>b.classList.add('gone')); e.target.disabled=true; sfx.lock(); say(tr().say.fifty); };
+$('lpoll').onclick=e=>{ if(Q.locked) return; const {q,right}=Q.cur(); const skill=[.75,.55,.4][q.lv-1]; let p=[0,1,2,3].map(i=>i===right?skill*100:Math.random()*30); const gone=[...document.querySelectorAll('#qopts .opt')].map(b=>b.classList.contains('gone')); p=p.map((v,i)=>gone[i]?0:v); const s2=p.reduce((a,b)=>a+b,0); poll=p.map(v=>v/s2*100); poll.t0=(performance.now()-t0)/1000; cheer=1.5; clap(20,1.2); e.target.disabled=true; say(tr().say.poll); };
+$('lask').onclick=e=>{ if(Q.locked) return; const {q,v}=Q.cur(); const sure=Math.random()<[.95,.85,.7][q.lv-1]; const guess=sure?v.a:shuffle(v.w)[0]; $('qexp').textContent=tr().expert(guess,sure); say(tr().say.expert(guess)); e.target.disabled=true; sfx.lock(); };
+$('lflip').onclick=e=>{ if(Q.locked) return; const lv=Q.list[Q.i].lv; const alt=Q.extra.find(x=>x.lv===lv)||Q.extra[0]; Q.extra=Q.extra.filter(x=>x!==alt); Q.list[Q.i]=alt; e.target.disabled=true; Q.show(); };
+$('lquit').onclick=()=>{ if(Q.locked) return; clearInterval(Q.timer); const n=Q.won.toLocaleString('en-IN'); $('qexp').textContent=tr().walk(n); say(tr().say.quit(n)); Q.finish(); };
+$('lang').onclick=()=>setLang(LANG==='en'?'hi':'en'); $('lEn').onclick=()=>setLang('en'); $('lHi').onclick=()=>setLang('hi');
+try{ speechSynthesis.onvoiceschanged=()=>applyLang(); }catch(e){}
+$('go').onclick=()=>{ ac(); playerName=($('pname').value||'').trim()||(SS.signedIn()?SS.me().name:(LANG==='hi'?'आप':'You')); $('intro').hidden=true; $('board').hidden=false; sfx.theme(); cheer=4; prize=tr().welcome(playerName);
+  let started=false; const start=()=>{ if(started) return; started=true; Q.newGame(); };
+  say(tr().say.welcome(playerName), start); setTimeout(start, VOICE?14000:2500); };
+applyLang();
+window.__getQ=()=>Q;
+})();
+</script>
+</body>
+</html>

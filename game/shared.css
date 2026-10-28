@@ -1,0 +1,49 @@
+/* Surya Games shared look: Son of Surya brand (navy, sun orange, off-white), Outfit display + DM Sans body. Dark arcade by design. */
+:root{
+  --night:#131111; --navy:#1E1B1A; --navy2:#2A2522; --sun:#D77804; --ray:#DB7706; --paper:#FCFCF8; --ink:#F5F2EC; --muted:#B3ABA3;
+  --panel:#24201E; --line:#3A3431; --good:#10B981; --bad:#FF6B6B; --gold:#FFD36B; --file:#E9DDBF; --fileink:#3A2E1A;
+  --display:'Outfit', 'Segoe UI', system-ui, sans-serif; --body:'DM Sans', 'Segoe UI', system-ui, sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0; background:radial-gradient(ellipse at top, #2A2522, var(--night) 62%) fixed; color:var(--ink); font-family:var(--body); font-size:16px; line-height:1.5}
+a{color:var(--sun)}
+.ss-wrap{max-width:1240px; margin:0 auto; padding-left:max(12px, env(safe-area-inset-left,0px)); padding-right:max(12px, env(safe-area-inset-right,0px))}
+/* header */
+.ss-head{position:sticky; top:env(safe-area-inset-top,0px); z-index:50; background:rgba(19,17,17,.88); backdrop-filter:blur(8px); border-bottom:1px solid var(--line)}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:60; background:#131111}
+.ss-bar{display:flex; align-items:center; gap:10px; padding-block:10px; flex-wrap:wrap}
+.ss-logo{display:flex; align-items:center; gap:9px; text-decoration:none; color:#fff; font:700 18px var(--display)}
+.ss-logo b{color:var(--sun)}
+.ss-logo small{font:600 11px var(--display); letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-left:4px}
+.ss-nav{display:flex; gap:4px; flex-wrap:wrap; flex:1}
+.ss-nav a{font:600 13px var(--display); color:#E2DDD6; text-decoration:none; padding:7px 11px; border-radius:999px}
+.ss-nav a[aria-current="page"]{background:var(--sun); color:var(--navy)}
+.ss-nav a:hover{background:rgba(255,255,255,.08)}
+.ss-user{display:flex; gap:8px; align-items:center}
+.ss-btn{font:700 14px var(--display); border:0; border-radius:12px; padding:10px 16px; cursor:pointer; background:var(--sun); color:var(--navy); text-decoration:none; display:inline-flex; align-items:center; gap:6px}
+.ss-btn.alt{background:rgba(255,255,255,.08); color:#fff; border:1px solid rgba(255,255,255,.18)}
+.ss-btn.sm{padding:7px 12px; font-size:13px; border-radius:10px}
+.ss-btn:disabled{opacity:.4; cursor:not-allowed}
+.ss-btn:focus-visible, .ss-nav a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible{outline:3px solid #fff; outline-offset:2px}
+.ss-chip{font:600 13px var(--display); background:rgba(24,21,20,.75); border:1px solid rgba(255,255,255,.14); padding:6px 12px; border-radius:999px; color:#fff; display:inline-flex; gap:6px; align-items:center}
+.ss-chip b{color:var(--sun)}
+.ss-av{width:30px; height:30px; border-radius:50%; background:var(--sun); color:var(--navy); display:grid; place-items:center; font:800 13px var(--display)}
+/* modal */
+.ss-modal{position:fixed; inset:0; z-index:100; display:grid; place-items:center; background:rgba(10,9,9,.72); padding:16px}
+.ss-modal[hidden]{display:none}
+.ss-card{background:var(--navy); border:1px solid var(--line); border-radius:18px; padding:22px; width:100%; max-width:440px; max-height:100%; overflow:auto}
+.ss-card h2{margin:0 0 4px; font:800 24px var(--display)}
+.ss-card p{color:var(--muted); margin:4px 0 0}
+.ss-tabs{display:flex; gap:6px; margin:14px 0 6px}
+.ss-tabs button{all:unset; cursor:pointer; font:600 14px var(--display); padding:7px 14px; border-radius:999px; background:var(--panel); border:1px solid var(--line)}
+.ss-tabs button[aria-selected="true"]{background:var(--sun); color:var(--navy); border-color:var(--sun)}
+.ss-field{display:grid; gap:4px; margin-top:10px; font:600 13px var(--display)}
+.ss-field input, .ss-field select{font:16px var(--body); padding:10px 12px; border-radius:10px; border:1.5px solid var(--line); background:var(--panel); color:#fff; width:100%}
+.ss-err{color:var(--bad); font-size:14px; min-height:20px; margin-top:8px}
+.ss-small{font-size:13px; color:var(--muted)}
+.ss-toast{pointer-events:none; position:fixed; left:50%; bottom:max(20px, env(safe-area-inset-bottom,0px)); transform:translateX(-50%); z-index:120; background:var(--file); color:var(--fileink); font:600 14px var(--display); padding:10px 16px; border-radius:10px; box-shadow:0 10px 30px -10px #000; opacity:0; transition:opacity .25s}
+.ss-toast.show{opacity:1}
+@media (max-width:700px){ .ss-head{position:relative; top:0} .ss-nav{order:3; flex-basis:100%; flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch} .ss-nav a{white-space:nowrap} .ss-logo small{display:none} }
+@media (prefers-reduced-motion: reduce){ *{transition:none!important; animation:none!important} }
