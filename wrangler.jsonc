@@ -1,0 +1,11 @@
+{
+  // Son of Surya website: static files in ./site, served by Cloudflare Workers.
+  "name": "son-of-surya",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./site",
+    // /about serves about.html, unknown pages get 404.html
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}

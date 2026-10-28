@@ -1,0 +1,101 @@
+# Old pages that needed the Airo server
+/login            /                301
+/signup           /                301
+/account          /                301
+/admin            /                301
+/cart             /solar-library   301
+/checkout/*       /solar-library   301
+/track-order      /contact         301
+/shop             /solar-library   301
+/shop/*          /solar-library   301
+
+# Services retired in Oct 2026
+/solar-calculator /solar-passport  301
+/create-passport  /solar-passport  301
+/solar-planset    /design          301
+/coastal-solar    /mission         301
+/impact           /mission         301
+/passport         /solar-passport  301
+/passport/*       /solar-passport  301
+/library/*        /solar-library   301
+/api/*            /                301
+
+# Web proposals: one page serves every /proposal/<id>
+/proposal/*       /proposal        200
+
+# Image slots used by the pages (/airo-assets/images/<slot>)
+/airo-assets/images/pages/home/farm-solar  /assets/media/sos-farm-solar.jpg  200
+/airo-assets/images/pages/home/farm-solar/light  /assets/media/sos-farm-solar.jpg  200
+/airo-assets/images/pages/home/farm-solar/dark  /assets/media/sos-farm-solar.jpg  200
+/airo-assets/images/pages/home/hero  /assets/media/sos-og-banner.jpg  200
+/airo-assets/images/pages/home/hero/light  /assets/media/sos-og-banner.jpg  200
+/airo-assets/images/pages/home/hero/dark  /assets/media/sos-og-banner.jpg  200
+/airo-assets/images/pages/home/rural-solar  /assets/media/sos-carousel-slide-1.jpg  200
+/airo-assets/images/pages/home/rural-solar/light  /assets/media/sos-carousel-slide-1.jpg  200
+/airo-assets/images/pages/home/rural-solar/dark  /assets/media/sos-carousel-slide-1.jpg  200
+/airo-assets/images/pages/home/library-card  /assets/media/sos-carousel-slide-3.jpg  200
+/airo-assets/images/pages/home/library-card/light  /assets/media/sos-carousel-slide-3.jpg  200
+/airo-assets/images/pages/home/library-card/dark  /assets/media/sos-carousel-slide-3.jpg  200
+/airo-assets/images/pages/home/gadgets-card  /assets/media/sos-carousel-slide-5.jpg  200
+/airo-assets/images/pages/home/gadgets-card/light  /assets/media/sos-carousel-slide-5.jpg  200
+/airo-assets/images/pages/home/gadgets-card/dark  /assets/media/sos-carousel-slide-5.jpg  200
+/airo-assets/images/logo/horizontal  /assets/media/logo-horizontal-on-light.png  200
+/airo-assets/images/logo/horizontal/light  /assets/media/logo-horizontal-on-light.png  200
+/airo-assets/images/logo/horizontal/dark  /assets/media/logo-horizontal-on-dark.png  200
+/airo-assets/images/pages/get-verified/hero  /assets/media/sos-carousel-slide-1.jpg  200
+/airo-assets/images/pages/get-verified/hero/light  /assets/media/sos-carousel-slide-1.jpg  200
+/airo-assets/images/pages/get-verified/hero/dark  /assets/media/sos-carousel-slide-1.jpg  200
+/airo-assets/images/pages/create-passport/hero  /assets/media/sos-carousel-slide-3.jpg  200
+/airo-assets/images/pages/create-passport/hero/light  /assets/media/sos-carousel-slide-3.jpg  200
+/airo-assets/images/pages/create-passport/hero/dark  /assets/media/sos-carousel-slide-3.jpg  200
+/airo-assets/images/imported/image-1791180239988  /assets/media/pages-home-farm-solar-bfd8f832.jpg  200
+/airo-assets/images/imported/image-1791180239988/light  /assets/media/pages-home-farm-solar-bfd8f832.jpg  200
+/airo-assets/images/imported/image-1791180239988/dark  /assets/media/pages-home-farm-solar-bfd8f832.jpg  200
+/airo-assets/images/imported/image-1791180323012  /assets/media/pages-home-farm-solar-3d023934.jpg  200
+/airo-assets/images/imported/image-1791180323012/light  /assets/media/pages-home-farm-solar-3d023934.jpg  200
+/airo-assets/images/imported/image-1791180323012/dark  /assets/media/pages-home-farm-solar-3d023934.jpg  200
+/airo-assets/images/imported/image-1791180370158  /assets/media/pages-home-farm-solar-b2b9ff85.jpg  200
+/airo-assets/images/imported/image-1791180370158/light  /assets/media/pages-home-farm-solar-b2b9ff85.jpg  200
+/airo-assets/images/imported/image-1791180370158/dark  /assets/media/pages-home-farm-solar-b2b9ff85.jpg  200
+/airo-assets/images/uploads/hero-nt1i1fl1rk-1791337868074-file-mugvycqe46  /assets/media/sos-hero.jpg  200
+/airo-assets/images/uploads/hero-nt1i1fl1rk-1791337868074-file-mugvycqe46/light  /assets/media/sos-hero.jpg  200
+/airo-assets/images/uploads/hero-nt1i1fl1rk-1791337868074-file-mugvycqe46/dark  /assets/media/sos-hero.jpg  200
+/airo-assets/images/uploads/hero-nt1i1fl1rk-1791337868074-file-mugvycqe46-2  /assets/media/sos-hero.jpg  200
+/airo-assets/images/uploads/hero-nt1i1fl1rk-1791337868074-file-mugvycqe46-2/light  /assets/media/sos-hero.jpg  200
+/airo-assets/images/uploads/hero-nt1i1fl1rk-1791337868074-file-mugvycqe46-2/dark  /assets/media/sos-hero.jpg  200
+/airo-assets/images/pages/home/solar-panels-on-an-indian-farm  /assets/media/sos-hero.jpg  200
+/airo-assets/images/pages/home/solar-panels-on-an-indian-farm/light  /assets/media/sos-hero.jpg  200
+/airo-assets/images/pages/home/solar-panels-on-an-indian-farm/dark  /assets/media/sos-hero.jpg  200
+/airo-assets/images/imported/image-1791338222229  /assets/media/pages-home-farm-solar-3f2fceda.jpg  200
+/airo-assets/images/imported/image-1791338222229/light  /assets/media/pages-home-farm-solar-3f2fceda.jpg  200
+/airo-assets/images/imported/image-1791338222229/dark  /assets/media/pages-home-farm-solar-3f2fceda.jpg  200
+/airo-assets/images/uploads/hero-nt1i1fl1rk-1791340376304-file-3ajcguzjnv  /assets/media/sos-hero.jpg  200
+/airo-assets/images/uploads/hero-nt1i1fl1rk-1791340376304-file-3ajcguzjnv/light  /assets/media/sos-hero.jpg  200
+/airo-assets/images/uploads/hero-nt1i1fl1rk-1791340376304-file-3ajcguzjnv/dark  /assets/media/sos-hero.jpg  200
+/airo-assets/images/uploads/hero-nt1i1fl1rk-1791340570726-file-hrd3eiaugh  /assets/media/sos-hero.jpg  200
+/airo-assets/images/uploads/hero-nt1i1fl1rk-1791340570726-file-hrd3eiaugh/light  /assets/media/sos-hero.jpg  200
+/airo-assets/images/uploads/hero-nt1i1fl1rk-1791340570726-file-hrd3eiaugh/dark  /assets/media/sos-hero.jpg  200
+/airo-assets/images/pages/home/carousel-slide-2  /assets/media/sos-carousel-slide-2.jpg  200
+/airo-assets/images/pages/home/carousel-slide-2/light  /assets/media/sos-carousel-slide-2.jpg  200
+/airo-assets/images/pages/home/carousel-slide-2/dark  /assets/media/sos-carousel-slide-2.jpg  200
+/airo-assets/images/pages/home/carousel-slide-1  /assets/media/sos-carousel-slide-1.jpg  200
+/airo-assets/images/pages/home/carousel-slide-1/light  /assets/media/sos-carousel-slide-1.jpg  200
+/airo-assets/images/pages/home/carousel-slide-1/dark  /assets/media/sos-carousel-slide-1.jpg  200
+/airo-assets/images/pages/home/carousel-slide-3  /assets/media/sos-carousel-slide-3.jpg  200
+/airo-assets/images/pages/home/carousel-slide-3/light  /assets/media/sos-carousel-slide-3.jpg  200
+/airo-assets/images/pages/home/carousel-slide-3/dark  /assets/media/sos-carousel-slide-3.jpg  200
+/airo-assets/images/pages/home/carousel-slide-4  /assets/media/sos-carousel-slide-4.jpg  200
+/airo-assets/images/pages/home/carousel-slide-4/light  /assets/media/sos-carousel-slide-4.jpg  200
+/airo-assets/images/pages/home/carousel-slide-4/dark  /assets/media/sos-carousel-slide-4.jpg  200
+/airo-assets/images/pages/home/carousel-slide-5  /assets/media/sos-carousel-slide-5.jpg  200
+/airo-assets/images/pages/home/carousel-slide-5/light  /assets/media/sos-carousel-slide-5.jpg  200
+/airo-assets/images/pages/home/carousel-slide-5/dark  /assets/media/sos-carousel-slide-5.jpg  200
+/airo-assets/images/logo/primary  /assets/media/logo-square-on-light.png  200
+/airo-assets/images/logo/primary/light  /assets/media/logo-square-on-light.png  200
+/airo-assets/images/logo/primary/dark  /assets/media/logo-square-on-light.png  200
+/airo-assets/images/logo/vertical  /assets/media/logo-square-on-light.png  200
+/airo-assets/images/logo/vertical/light  /assets/media/logo-square-on-light.png  200
+/airo-assets/images/logo/vertical/dark  /assets/media/logo-square-on-light.png  200
+
+# Uploaded files referenced directly
+/airo-assets/uploads/*  /assets/media/:splat  200

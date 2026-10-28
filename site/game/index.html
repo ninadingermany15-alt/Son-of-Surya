@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Surya Games</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="shared.css">
+<style>
+.hero{display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:18px; padding-block:26px 10px; align-items:center}
+@media (max-width:860px){ .hero{grid-template-columns:minmax(0,1fr)} }
+.hero h1{margin:0; font:800 clamp(32px,5vw,58px)/1.02 var(--display); text-wrap:balance}
+.hero h1 em{font-style:normal; color:var(--sun)}
+.hero p{color:var(--muted); font-size:18px; max-width:56ch; margin:12px 0 0}
+.player{background:linear-gradient(160deg,#2A2522,#1E1B1A); border:1px solid var(--line); border-radius:18px; padding:18px}
+.player .row{display:flex; gap:12px; align-items:center}
+.big-av{width:58px; height:58px; border-radius:50%; background:var(--sun); color:var(--navy); display:grid; place-items:center; font:800 24px var(--display)}
+.player h2{margin:0; font:800 22px var(--display)}
+.xpbar{height:10px; border-radius:8px; background:#2C2724; overflow:hidden; margin:12px 0 6px} .xpbar i{display:block; height:100%; background:linear-gradient(90deg,var(--ray),var(--gold))}
+.stats{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px}
+.stats div{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:10px; text-align:center}
+.stats b{display:block; font:800 22px var(--display); color:var(--sun)} .stats span{font-size:12px; color:var(--muted)}
+.games{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; padding-block:18px}
+.g{background:var(--panel); border:1px solid var(--line); border-radius:18px; overflow:hidden; display:flex; flex-direction:column; text-decoration:none; color:var(--ink); transition:transform .15s, border-color .15s}
+.g:hover{transform:translateY(-4px); border-color:var(--sun)} .g:focus-visible{outline:3px solid #fff}
+.g canvas{width:100%; aspect-ratio:16/9; display:block}
+.g .in{padding:14px; display:grid; gap:6px; align-content:center; flex:1}
+.g h3{margin:0; font:800 19px var(--display)} .g p{margin:0; color:var(--muted); font-size:14px}
+.g .meta{display:flex; justify-content:space-between; gap:8px; font:600 12px var(--display); color:var(--muted)} .g .meta b{color:var(--sun)}
+.g.main{grid-column:1/-1; flex-direction:row} .g.main canvas{width:55%; aspect-ratio:auto; min-height:260px}
+@media (max-width:760px){ .g.main{flex-direction:column} .g.main canvas{width:100%; min-height:0; aspect-ratio:16/9} }
+.tag{display:inline-block; justify-self:start; align-self:flex-start; font:700 11px var(--display); background:var(--sun); color:var(--navy); padding:3px 9px; border-radius:999px; letter-spacing:.06em}
+h2.sec{font:800 24px var(--display); margin:18px 0 10px}
+.badges{display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:8px}
+.bd{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:10px; text-align:center; font:600 13px var(--display)} .bd span{display:block; font-size:26px} .bd.lock{opacity:.35}
+.certs{display:grid; gap:8px} .cert{display:flex; justify-content:space-between; gap:10px; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:10px 14px; font-size:14px}
+footer{padding-block:28px; color:var(--muted); font-size:13px; border-top:1px solid var(--line); margin-top:24px}
+</style>
+</head>
+<body>
+<main class="ss-wrap">
+  <section class="hero">
+    <div><div class="tag">SON OF SURYA GAMES</div><h1 style="margin-top:10px">Learn solar by <em>building it</em></h1><p>Run 43 real-world solar projects, complete 20 Yoddha missions from a garden light to a gigawatt park, take the hot seat on Kaun Banega Solar Hero, equip clients as Gadget Guru, and wire up ten systems in Abhi Thik Karke Deta Hu. One free account saves every record, badge and certificate.</p></div>
+    <div class="player" id="player"></div>
+  </section>
+  <section class="games" id="games"></section>
+  <h2 class="sec">Badges</h2><div class="badges" id="badges"></div>
+  <h2 class="sec">Certificates</h2><div class="certs" id="certs"></div>
+  <h2 class="sec">Track record</h2><div class="certs" id="track"></div>
+</main>
+<footer><div class="ss-wrap">Son of Surya · sonofsurya.com · sonofsurya15@gmail.com · Games are for learning; certificates are not professional qualifications.</div></footer>
+<script src="account.js"></script>
+<script src="icons.js"></script>
+<script src="cases.js"></script>
+<script src="cases-more.js"></script>
+<script>
+(()=>{
+SS.mountHeader('hub');
+const GAMES=[
+ {href:'mission.html', key:'mission', name:'Surya Mission', tag:'MAIN GAME', desc:'Pick a region, choose a project and run it start to finish: investigate, size, shade, wire, move the crew, stay safe and commission. '+SM_CASES.length+' real-world projects across India, the Middle East, Africa, the Americas, Europe and South-East Asia.', art:'mission', main:true},
+ {href:'yoddha.html', key:'yoddha', name:'Suryaputra Yoddha 3D', desc:'20 missions from a 10 W garden light to a 2 GW solar park. Grab the right parts and papers, finish the job, earn the certificate.', art:'run'},
+ {href:'quiz.html', key:'quiz', name:'Kaun Banega Solar Hero', desc:'Take the hot seat: a host, a live audience, 4 lifelines and new questions every game.', art:'quiz'},
+ {href:'gadget.html', key:'gadget', name:'Gadget Guru', desc:'Five random clients a shift. Pick the right panels, inverters, pumps and batteries.', art:'gadget'},
+ {href:'build.html', key:'build', name:'Abhi Thik Karke Deta Hu', desc:'Wire ten real systems from a garden light to a 1 MW farm. Decoys will try to fool you.', art:'build'}
+];
+const BADGES=[['sm-eye','🔍','Sharp Eye'],['sm-size','📐','Sizing Pro'],['sm-shadow','🌴','Shadow Hunter'],['sm-wire','⚡','Live Wire'],['sm-safe','🦺','Safe Hands'],['sm-twist','🧩','Problem Solver'],['sm-globe','🌍','Globe Trotter'],['yd-5','🏘️','Village Hero'],['yd-10','🏫','Rooftop Champion'],['yd-15','🌊','Utility Builder'],['yd-20','⚡','Suryaputra Yoddha'],['quiz-32k','🎙️','Hot Seat Star'],['quiz-hero','🏆','Solar Hero'],['gg-guru','🧰','Gadget Guru'],['build-all','🔌','Master Electrician']];
+function stat(key){ const r=SS.records(key==='run'||key==='quiz'?key:key); if(key==='mission') return Object.keys(r).length+' / '+SM_CASES.length+' cases'; if(key==='build') return Object.keys(r).length+' / 10 systems'; if(key==='yoddha') return Object.keys(r).length+' / 20 missions'; if(key==='quiz') return r.best? r.best.score.toLocaleString('en-IN')+' cells best':'Not played'; if(key==='gadget') return r.best? r.best.score+' best':'Not played'; return ''; }
+function paint(){ const me=SS.me(), lv=SS.level(), into=me.xp%300;
+  document.getElementById('player').innerHTML='<div class="row"><div class="big-av">'+SS.esc(me.name.slice(0,1).toUpperCase())+'</div><div><h2>'+SS.esc(me.name)+'</h2><div class="ss-small">'+(SS.signedIn()?'Signed in · '+SS.esc(me.contact):'Playing as guest · sign in to save your progress online')+'</div></div></div><div class="xpbar"><i style="width:'+(into/300*100)+'%"></i></div><div class="ss-small">Level '+lv+' · '+me.xp+' XP · '+(300-into)+' XP to level '+(lv+1)+'</div><div class="stats"><div><b>'+Object.keys(SS.records('mission')).length+'</b><span>Cases closed</span></div><div><b>'+me.badges.length+'</b><span>Badges</span></div><div><b>'+me.certs.length+'</b><span>Certificates</span></div></div>'+(SS.signedIn()?'':'<button class="ss-btn" type="button" id="join" style="margin-top:12px">Create a free account</button>');
+  const j=document.getElementById('join'); if(j) j.onclick=()=>SS.openAuth('up');
+  const gs=document.getElementById('games'); gs.innerHTML=GAMES.map(g=>'<a class="g'+(g.main?' main':'')+'" href="'+g.href+'"><canvas data-art="'+g.art+'" width="800" height="450"></canvas><div class="in">'+(g.tag?'<span class="tag">'+g.tag+'</span>':'')+'<h3>'+g.name+'</h3><p>'+g.desc+'</p><div class="meta"><span>Your record</span><b>'+stat(g.key)+'</b></div></div></a>').join('');
+  document.getElementById('badges').innerHTML=BADGES.map(b=>'<div class="bd'+(me.badges.includes(b[0])?'':' lock')+'"><span>'+b[1]+'</span>'+b[2]+'</div>').join('');
+  document.getElementById('certs').innerHTML=me.certs.length? me.certs.slice().reverse().map(c=>'<div class="cert"><span><b>'+SS.esc(c.title)+'</b><br><span class="ss-small">'+SS.esc(c.role||'')+' · '+SS.esc(c.date)+'</span></span><span>'+'★'.repeat(c.stars||0)+'</span></div>').join('') : '<div class="cert"><span class="ss-small">Close a Surya Mission case to earn your first certificate.</span></div>';
+}
+function track(){ const R=k=>SS.records(k); const m=R('mission'), y=R('yoddha'), q=R('quiz'), g=R('gadget'), bd=R('build');
+  const regions={}; Object.keys(m).forEach(id=>{ const c=SM_CASES.find(x=>x.id===id); if(c) regions[c.region]=(regions[c.region]||0)+1; });
+  const all={}; SM_CASES.forEach(c=>all[c.region]=(all[c.region]||0)+1);
+  const ys=Object.values(y).reduce((a,r)=>a+(r.stars||0),0);
+  const rows=[['Surya Mission',Object.keys(m).length+' / '+SM_CASES.length+' cases · '+Object.keys(all).map(r=>r+' '+(regions[r]||0)+'/'+all[r]).join(' · ')],
+    ['Suryaputra Yoddha',Object.keys(y).length+' / 20 missions · '+ys+' / 60 stars'],
+    ['Kaun Banega Solar Hero',q.best?'Best '+q.best.score.toLocaleString('en-IN')+' Solar Cells · '+(q.best.plays||1)+' games':'Not played yet'],
+    ['Gadget Guru',g.best?'Best score '+g.best.score+' · '+(g.best.plays||1)+' shifts':'Not played yet'],
+    ['Abhi Thik Karke Deta Hu',Object.keys(bd).length+' / 10 systems wired']];
+  document.getElementById('track').innerHTML=rows.map(r=>'<div class="cert"><span><b>'+r[0]+'</b><br><span class="ss-small">'+SS.esc(r[1])+'</span></span></div>').join(''); }
+paint(); track(); SS.onChange(()=>{ paint(); track(); });
+/* animated thumbnails */
+function art(c,kind,t){ const g=c.getContext('2d'), W=800, H=450;
+  const sky=g.createLinearGradient(0,0,0,H); sky.addColorStop(0,{mission:'#79B8E5',run:'#5FA8E0',quiz:'#25211F',gadget:'#2B3F6E',build:'#081226'}[kind]); sky.addColorStop(1,{mission:'#F4E7C8',run:'#FBE3B4',quiz:'#1E1B1A',gadget:'#1E1B1A',build:'#1E1B1A'}[kind]); g.fillStyle=sky; g.fillRect(0,0,W,H);
+  if(kind==='mission'){ g.fillStyle='rgba(255,214,120,.5)'; g.beginPath(); g.arc(640,90,70,0,7); g.fill(); g.fillStyle='#FFD36B'; g.beginPath(); g.arc(640,90,34,0,7); g.fill(); g.fillStyle='#4E7D45'; g.fillRect(0,300,W,150); g.fillStyle='#E9D6B0'; g.fillRect(270,230,260,110); g.fillStyle='#B5532F'; g.beginPath(); g.moveTo(250,232); g.lineTo(400,150); g.lineTo(550,232); g.fill(); for(let i=0;i<4;i++){ g.save(); g.translate(330+i*40,190); g.transform(1,0,-.3,.55,0,0); g.fillStyle='#2A2624'; g.fillRect(0,0,36,60); g.restore(); }
+    g.fillStyle='#F4F1E8'; const vx=(t*80)%(W+200)-100; g.fillRect(vx,360,120,44); g.fillStyle='#FDA604'; g.font='700 12px Outfit'; g.fillText('SON OF SURYA',vx+10,388); g.fillStyle='#111'; g.beginPath(); g.arc(vx+24,406,10,0,7); g.arc(vx+96,406,10,0,7); g.fill(); g.fillStyle='rgba(24,21,20,.7)'; g.fillRect(20,20,300,40); g.fillStyle='#fff'; g.font='600 16px Outfit'; g.fillText('43 cases · 6 regions',34,46); }
+  if(kind==='run'){ g.fillStyle='#C2925A'; g.fillRect(0,230,W,220); g.fillStyle='#5A5C66'; g.beginPath(); g.moveTo(330,230); g.lineTo(470,230); g.lineTo(640,H); g.lineTo(160,H); g.fill(); for(let r=0;r<5;r++) for(let s of [-1,1]){ const y=240+r*40, w=40+r*24; g.fillStyle='#1C3A78'; g.fillRect(400+s*(90+r*50)-w/2,y,w,8+r*2); }
+    const bob=Math.sin(t*10)*4; g.fillStyle='#FDA604'; g.fillRect(388,330+bob,26,34); g.fillStyle='#B57B52'; g.beginPath(); g.arc(401,320+bob,10,0,7); g.fill(); g.fillStyle='#C0392B'; g.fillRect(385,332+bob,6,26); }
+  if(kind==='quiz'){ g.strokeStyle='rgba(253,166,4,.3)'; for(let i=0;i<10;i++){ g.beginPath(); g.arc(400,225,40+i*28+(t*20)%28,0,7); g.stroke(); } g.fillStyle='#0A1530'; g.strokeStyle='#3D3632'; g.lineWidth=3; [[120,280],[420,280],[120,350],[420,350]].forEach(([x,y],i)=>{ g.beginPath(); g.roundRect(x,y,260,50,25); g.fill(); g.stroke(); g.fillStyle='#FDA604'; g.font='700 18px Outfit'; g.fillText('ABCD'[i],x+20,y+32); g.fillStyle='#0A1530'; }); g.fillStyle='#fff'; g.font='700 26px Outfit'; g.fillText('Kaun Banega Solar Hero',230,140); }
+  if(kind==='gadget'){ ['panel','inverter','battery','pump'].forEach((ic,i)=>drawIcon(g,ic,130+i*180,230+Math.sin(t*2+i)*8,150,t)); }
+  if(kind==='build'){ const kinds=['panel','isolator','inverter','acdb','meter','grid']; for(let i=0;i<5;i++){ g.strokeStyle='#10B981'; g.lineWidth=5; g.beginPath(); g.moveTo(90+i*125+40,225); g.lineTo(90+(i+1)*125-40,225); g.stroke(); const p=(t*.8+i*.2)%1; g.fillStyle='#FDA604'; g.beginPath(); g.arc(90+i*125+40+p*45,225,6,0,7); g.fill(); } kinds.forEach((k,i)=>drawIcon(g,k,90+i*125,225,90,t)); }
+}
+function loop(){ const t=performance.now()/1000; document.querySelectorAll('canvas[data-art]').forEach(c=>art(c,c.dataset.art,t)); requestAnimationFrame(loop); } loop();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gadget Guru</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="shared.css">
+<style>
+.gg{display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:14px; padding-block:14px}
+@media (max-width:900px){ .gg{grid-template-columns:minmax(0,1fr)} }
+.scene{position:relative; border-radius:18px; overflow:hidden; background:#000; aspect-ratio:16/10; max-width:100%}
+.scene canvas{position:absolute; inset:0; width:100%; height:100%}
+.brief{position:absolute; left:12px; right:12px; bottom:12px; background:rgba(24,21,20,.9); border:1px solid var(--line); border-radius:14px; padding:12px 14px}
+.brief h2{margin:0; font:800 20px var(--display)} .brief h2 em{font-style:normal; color:var(--sun)}
+.brief p{margin:4px 0 0; color:var(--muted); font-size:15px}
+.facts{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px}
+.facts span{font:600 12px var(--display); background:var(--panel); border:1px solid var(--line); border-radius:999px; padding:4px 10px}
+.panel{background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:16px; min-width:0}
+.top{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+.step{font:700 18px var(--display); margin:10px 0 2px}
+.step small{display:block; color:var(--muted); font:500 14px var(--body)}
+.cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; margin-top:12px}
+.card{all:unset; cursor:pointer; background:linear-gradient(180deg,#2A2522,#0F1D38); border:2px solid var(--line); border-radius:14px; padding:10px; display:grid; gap:6px; transition:transform .15s, border-color .15s}
+.card:hover{transform:translateY(-3px); border-color:var(--sun)} .card:focus-visible{outline:3px solid #fff}
+.card canvas{width:100%; height:auto; aspect-ratio:34/22; border-radius:10px; background:radial-gradient(circle at 50% 40%, #3A3330, #0B1730)}
+.card b{font:700 14px var(--display); line-height:1.3}
+.card small{color:var(--muted); font-size:13px; line-height:1.35}
+.card .price{font:700 14px var(--display); color:var(--sun)}
+.card.ok{border-color:var(--good); background:linear-gradient(180deg,#123B33,#0E2A27)} .card.no{border-color:var(--bad); opacity:.75}
+.exp{min-height:44px; margin-top:12px; color:#FFD98A; font-size:15px}
+.prog{display:flex; gap:4px; margin-top:8px} .prog i{flex:1; height:6px; border-radius:6px; background:#2C2724} .prog i.done{background:var(--good)} .prog i.on{background:var(--sun)}
+.end{text-align:center; padding:20px 10px} .end h2{font:800 32px var(--display); margin:0} .end h2 em{font-style:normal; color:var(--sun)}
+</style>
+</head>
+<body>
+<main class="ss-wrap gg">
+  <section>
+    <div class="scene"><canvas id="sc" width="1280" height="800" aria-label="Client scene"></canvas>
+      <div class="brief" id="brief"></div>
+    </div>
+  </section>
+  <section class="panel" aria-live="polite">
+    <div class="top"><span class="ss-chip">Job <b id="jobn">1</b> / 5</span><span class="ss-chip">Score <b id="score">0</b></span><span class="ss-chip">Best <b id="best">0</b></span><button class="ss-btn alt sm" type="button" id="snd">🔇 Sound off</button></div>
+    <div class="prog" id="prog"></div>
+    <div id="play"></div>
+  </section>
+</main>
+<script src="account.js"></script>
+<script src="icons.js"></script>
+<script>
+(()=>{
+SS.mountHeader('gadget');
+/* audio */
+let AC=null,M=null,on=false,mt=null; const tn=(f,d=.15,ty='sine',v=.2,w=0)=>{ if(!AC||!on) return; const t=AC.currentTime+w,o=AC.createOscillator(),g=AC.createGain(); o.type=ty; o.frequency.setValueAtTime(f,t); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(v,t+.015); g.gain.exponentialRampToValueAtTime(.0001,t+d); o.connect(g); g.connect(M); o.start(t); o.stop(t+d+.05); };
+const fx={ok:()=>[523,659,784].forEach((f,i)=>tn(f,.2,'triangle',.15,i*.08)), no:()=>{tn(200,.3,'sawtooth',.12);}, pick:()=>tn(700,.06,'triangle',.1), win:()=>[392,523,659,784,1046].forEach((f,i)=>tn(f,.45,'triangle',.13,i*.11))};
+document.getElementById('snd').onclick=e=>{ if(!AC){ try{AC=new (window.AudioContext||window.webkitAudioContext)(); M=AC.createGain(); M.gain.value=.5; M.connect(AC.destination);}catch(_){} } if(!AC) return; AC.resume&&AC.resume(); on=!on; e.target.textContent=on?'🔊 Sound on':'🔇 Sound off';
+  clearInterval(mt); if(on){ let s=0; const sc=[262,294,330,392,440,523]; mt=setInterval(()=>{ if(s%4===0) tn(131,.5,'sine',.04); tn(sc[(s*3)%6],.25,'triangle',.03); s++; },300);} };
+const pick=a=>a[Math.floor(Math.random()*a.length)], rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1)), shuffle=a=>{a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a;};
+const inr=n=>'₹'+Math.round(n).toLocaleString('en-IN');
+/* job generators: each returns {scene, title, who, story, facts[], steps:[{q,hint,opts:[{name,icon,spec,price,ok,why}]}]} */
+const NAMES={home:['Sharma family','Kulkarni family','Iyer family','Das family'],farm:['Ramesh Yadav','Gurpreet Singh','Lakshmi Reddy','Bhanwar Lal'],shop:['Ali Medicals','Patel Kirana Store','Joseph Tailors','Mehta Xerox'],hut:['Sunita in Gadchiroli','Birsa in Jharkhand','Hemant in Ladakh','Rupa in Sundarbans'],factory:['Shree Plastics','Konkan Cashew Works','Nashik Auto Parts','Kerala Rubber Mills']};
+function genHome(){ const units=rnd(5,20)*30, kw=Math.max(1,Math.min(5,Math.round(units/112))), n=Math.ceil(kw*1000/550);
+  return {scene:'home', title:pick(NAMES.home), who:'Homeowner · on-grid', story:'Uses about '+units+' units a month and wants the PM Surya Ghar subsidy.', facts:[units+' units/month','Single-phase','Roof 25 m²','Wants subsidy'],
+   steps:[{q:'Pick the panels', hint:'About 112 units a month per kW here. Subsidy needs ALMM-listed panels.', opts:[
+     {name:n+' × 550 W ALMM mono panels',icon:'panel',spec:(n*0.55).toFixed(2)+' kWp · ALMM listed',price:inr(n*14000),ok:1,why:'Right size, and ALMM-listed so the subsidy applies.'},
+     {name:(n*2)+' × 550 W ALMM panels',icon:'array',spec:(n*1.1).toFixed(2)+' kWp',price:inr(n*28000),why:'Double the need. Extra cost, and the subsidy is capped at 3 kW.'},
+     {name:n+' × 550 W non-ALMM panels',icon:'panel',spec:'20% cheaper · not ALMM',price:inr(n*11000),why:'Not ALMM-listed: no PM Surya Ghar subsidy.'},
+     {name:'4 × 50 W panels',icon:'panel-s',spec:'0.2 kWp',price:inr(9000),why:'Far too small for '+units+' units.'}]},
+    {q:'Pick the power device', hint:'On-grid homes use a grid-tied inverter sized to the array.', opts:[
+     {name:kw+' kW on-grid string inverter',icon:'inverter',spec:'Single-phase · MPPT',price:inr(kw*9000+12000),ok:1,why:'Matches the array and works with net metering.'},
+     {name:kw+' kVA off-grid inverter',icon:'inv-off',spec:'Needs batteries',price:inr(kw*12000),why:'Off-grid systems don’t qualify for net metering.'},
+     {name:'10 kW three-phase inverter',icon:'inv-3ph',spec:'Three-phase',price:inr(110000),why:'Oversized and the home is single-phase.'}]},
+    {q:'What else is needed?', hint:'You need protection and a meter that counts both ways.', opts:[
+     {name:'Net meter + ACDB with surge protection',icon:'meter',spec:'Bidirectional meter',price:inr(9000),ok:1,why:'Needed to export power and stay safe.'},
+     {name:'200 Ah lead-acid batteries',icon:'car-battery',spec:'2.4 kWh',price:inr(32000),why:'Not needed for on-grid; adds cost and maintenance.'},
+     {name:'Nothing extra',icon:'grid',spec:'—',price:'₹0',why:'Without a net meter you can’t export, and protection is mandatory.'}]}]}; }
+function genFarm(){ const depth=pick([60,100,150,200,250]), hp=depth<=80?2:depth<=140?3:5, kwp=hp===2?2:hp===3?3:4.8;
+  return {scene:'farm', title:pick(NAMES.farm), who:'Farmer · solar pump', story:'Borewell '+depth+' ft deep. Wants to stop paying for diesel.', facts:['Borewell '+depth+' ft','No grid at field','PM-KUSUM','Diesel today'],
+   steps:[{q:'Pick the pump', hint:'Roughly: up to 80 ft → 2 HP, up to 140 ft → 3 HP, deeper → 5 HP.', opts:shuffle([
+     {name:hp+' HP submersible solar pump',icon:'pump',spec:'DC/AC brushless · '+depth+' ft',price:inr(hp*22000),ok:1,why:'Right head and flow for '+depth+' ft.'},
+     {name:(hp===2?5:2)+' HP submersible pump',icon:'pump',spec:'Wrong size',price:inr((hp===2?5:2)*22000),why:hp===2?'Oversized for a shallow well; wastes money.':'Too weak for this depth.'},
+     {name:'1 HP surface pump',icon:'ac-pump',spec:'Suction lift ~25 ft',price:inr(9000),why:'A surface pump can’t lift water from '+depth+' ft.'}])},
+    {q:'Pick the controller', hint:'Pumps run directly from the sun. The tank is the storage.', opts:[
+     {name:'Solar pump controller (VFD) with MPPT',icon:'vfd',spec:'Runs pump direct from panels',price:inr(28000),ok:1,why:'Converts panel power for the pump and tracks the sun.'},
+     {name:'On-grid inverter',icon:'inverter',spec:'Needs grid',price:inr(30000),why:'There’s no grid at the field; it won’t start.'},
+     {name:'Off-grid inverter + battery bank',icon:'car-battery',spec:'Battery storage',price:inr(90000),why:'Batteries add cost. Store water in a tank, not energy in batteries.'}]},
+    {q:'Pick the array', hint:'About 1 kWp per HP under PM-KUSUM.', opts:shuffle([
+     {name:kwp+' kWp array',icon:'array',spec:Math.ceil(kwp*1000/540)+' × 540 W',price:inr(kwp*30000),ok:1,why:'Matches the pump.'},
+     {name:(kwp/2).toFixed(1)+' kWp array',icon:'panel',spec:'Half size',price:inr(kwp*15000),why:'The pump will barely run.'},
+     {name:(kwp*2).toFixed(1)+' kWp array',icon:'array',spec:'Double size',price:inr(kwp*60000),why:'Wasted panels; the controller can’t use it all.'}])}]}; }
+function genShop(){ const units=rnd(10,26)*30, kw=Math.max(2,Math.min(8,Math.round(units/112))), cut=rnd(2,4), load=pick([600,800,1000,1200]), need=load*cut/0.9/1000, bat=need<=2.5?2.5:need<=5?5:10;
+  return {scene:'shop', title:pick(NAMES.shop), who:'Shop · power cuts', story:'Uses '+units+' units a month. Power goes off '+cut+' hours every evening; needs '+load+' W of backup for lights, fridge and billing.', facts:[units+' units/month',cut+' h cuts daily','Backup '+load+' W','Single-phase'],
+   steps:[{q:'Pick the power device', hint:'An on-grid inverter switches off in a power cut for safety.', opts:[
+     {name:kw+' kW hybrid inverter',icon:'hybrid',spec:'Grid + battery + solar',price:inr(kw*15000+20000),ok:1,why:'Keeps the shop running when the grid fails.'},
+     {name:kw+' kW on-grid inverter',icon:'inverter',spec:'No backup',price:inr(kw*9000+12000),why:'Shuts down in a power cut (anti-islanding). No backup.'},
+     {name:'UPS from an electronics shop',icon:'adapter',spec:'No solar input',price:inr(12000),why:'Can’t take solar power.'}]},
+    {q:'Pick the battery', hint:'Backup Wh = load × hours ÷ 0.9.', opts:shuffle([
+     {name:bat+' kWh LFP battery',icon:'battery',spec:'Covers '+load+' W × '+cut+' h',price:inr(bat*22000),ok:1,why:load+' × '+cut+' ÷ 0.9 ≈ '+need.toFixed(1)+' kWh. This covers it.'},
+     {name:(bat===2.5?10:1)+' kWh LFP battery',icon:'battery',spec:bat===2.5?'Oversized':'Too small',price:inr((bat===2.5?10:1)*22000),why:bat===2.5?'Much more than the shop needs.':'Runs out early in the outage.'},
+     {name:'Car battery 12 V 100 Ah',icon:'car-battery',spec:'~1.2 kWh lead-acid',price:inr(9000),why:'Not made for daily deep cycling.'}])},
+    {q:'Pick the panels', hint:'About 112 units a month per kW.', opts:shuffle([
+     {name:Math.ceil(kw*1000/550)+' × 550 W panels',icon:'panel',spec:(Math.ceil(kw*1000/550)*0.55).toFixed(2)+' kWp',price:inr(Math.ceil(kw*1000/550)*14000),ok:1,why:'Covers the monthly use.'},
+     {name:'2 × 550 W panels',icon:'panel',spec:'1.1 kWp',price:inr(28000),why:'Too small for '+units+' units.'},
+     {name:'10 × 50 W panels',icon:'panel-s',spec:'0.5 kWp',price:inr(20000),why:'Small panels cost more per watt and are far too few.'}])}]}; }
+function genHut(){ const lights=rnd(2,4), fanH=rnd(4,8), wh=lights*9*5+40*fanH+20, pw=Math.ceil(wh/(5*0.75)/50)*50, ah=Math.ceil(wh/0.8/12.8/10)*10;
+  return {scene:'hut', title:pick(NAMES.hut), who:'Off-grid home', story:lights+' LED lights for 5 hours, a 40 W fan for '+fanH+' hours, and phone charging. No grid at all.', facts:['~'+wh+' Wh a day','No grid','5 sun hours','Budget tight'],
+   steps:[{q:'Pick the panel', hint:'Panel W ≈ daily Wh ÷ (5 h × 0.75).', opts:shuffle([
+     {name:pw+' W panel',icon:'panel',spec:'≈ '+Math.round(pw*5*.75)+' Wh/day',price:inr(pw*35),ok:1,why:wh+' ÷ 3.75 ≈ '+Math.ceil(wh/3.75)+' W, so '+pw+' W.'},
+     {name:'20 W panel',icon:'panel-s',spec:'≈ 75 Wh/day',price:inr(1200),why:'Gives only about 75 Wh a day.'},
+     {name:'3 kW array',icon:'array',spec:'≈ 11 kWh/day',price:inr(90000),why:'Massively oversized for this home.'}])},
+    {q:'Pick the controller', hint:'Off-grid: the controller charges the battery safely.', opts:[
+     {name:'MPPT charge controller 20 A',icon:'controller',spec:'12/24 V · MPPT',price:inr(3500),ok:1,why:'Charges the battery efficiently and protects it.'},
+     {name:'On-grid inverter',icon:'inverter',spec:'Needs grid',price:inr(25000),why:'No grid here; it won’t run.'},
+     {name:'Connect panel straight to battery',icon:'thin-cable',spec:'No control',price:'₹0',why:'Overcharges and kills the battery.'}]},
+    {q:'Pick the battery', hint:'Ah ≈ daily Wh ÷ 0.8 ÷ 12.8 V.', opts:shuffle([
+     {name:'12.8 V '+ah+' Ah LFP',icon:'battery',spec:'≈ '+Math.round(ah*12.8)+' Wh',price:inr(ah*12.8*18),ok:1,why:'Holds a full night with margin.'},
+     {name:'12.8 V 7 Ah LFP',icon:'battery',spec:'≈ 90 Wh',price:inr(1800),why:'Empty before midnight.'},
+     {name:'Used car battery',icon:'car-battery',spec:'Unknown health',price:inr(2500),why:'Short life and unsafe for daily cycling.'}])}]}; }
+function genFactory(){ const units=rnd(8,20)*1000, kw=Math.round(units/112/10)*10;
+  return {scene:'factory', title:pick(NAMES.factory), who:'Factory · three-phase', story:'Uses '+units.toLocaleString('en-IN')+' units a month, mostly in daytime. Metal shed roof.', facts:[units.toLocaleString('en-IN')+' units/month','Three-phase','Metal roof','Daytime load'],
+   steps:[{q:'Pick the inverter setup', hint:'Factories are three-phase.', opts:[
+     {name:(kw/2)+' kW × 2 three-phase string inverters',icon:'inv-3ph',spec:kw+' kW total',price:inr(kw*4500),ok:1,why:'Three-phase, and two units keep it running if one fails.'},
+     {name:kw+' × 1 kW single-phase inverters',icon:'inverter',spec:'Many small units',price:inr(kw*7000),why:'Unbalances the three phases and is costly.'},
+     {name:'Off-grid inverter bank',icon:'inv-off',spec:'Needs batteries',price:inr(kw*12000),why:'Daytime load uses solar directly; no batteries needed.'}]},
+    {q:'Pick the DC cable', hint:'Long runs in a hot shed need thicker cable.', opts:[
+     {name:'6 mm² UV-rated solar cable',icon:'cable',spec:'DC 1.5 kV',price:inr(kw*900),ok:1,why:'Low losses over long roof runs.'},
+     {name:'2.5 mm² house wire',icon:'thin-cable',spec:'AC 1.1 kV',price:inr(kw*300),why:'Overheats and isn’t UV-rated.'},
+     {name:'Bare aluminium wire',icon:'thin-cable',spec:'No insulation',price:inr(kw*200),why:'Dangerous and illegal for DC.'}]},
+    {q:'Pick the mounting', hint:'Don’t drill holes in a metal roof.', opts:[
+     {name:'Seam clamps and rails for metal sheet',icon:'combiner',spec:'No roof drilling',price:inr(kw*1800),ok:1,why:'Fixes to the roof seams without leaks.'},
+     {name:'Concrete blocks on the sheet',icon:'tank',spec:'Ballast',price:inr(kw*900),why:'Too heavy; can dent or break the sheet.'},
+     {name:'Self-drilling screws through the sheet',icon:'grid',spec:'Many holes',price:inr(kw*500),why:'Every hole is a future leak.'}]}]}; }
+const GENS=[genHome,genFarm,genShop,genHut,genFactory];
+/* scene painter */
+const cv=document.getElementById('sc'), X=cv.getContext('2d'); let T=0, job=null;
+function person(x,y,s,c){ X.save(); X.translate(x,y); X.scale(s,s); X.fillStyle='rgba(0,0,0,.25)'; X.beginPath(); X.ellipse(0,0,18,5,0,0,7); X.fill(); X.fillStyle='#2B3A55'; X.fillRect(-9,-38,7,38); X.fillRect(2,-38,7,38); X.fillStyle=c||'#E8E0CC'; X.beginPath(); X.roundRect(-14,-80,28,44,8); X.fill(); X.fillStyle='#B57B52'; X.beginPath(); X.arc(0,-94,13,0,7); X.fill(); X.fillStyle='#1a1a1a'; X.beginPath(); X.arc(0,-98,13,Math.PI,0); X.fill(); X.restore(); }
+function draw(){ T+=0.016; const W=1280,H=800, s=job?job.scene:'home';
+  const skies={home:['#79B8E5','#D7ECF4'],farm:['#86C9EC','#F2E6C6'],shop:['#6E8FB8','#E9D7B8'],hut:['#F2A65A','#FBE3B4'],factory:['#8FB7D6','#E3E6EA']}[s];
+  const g=X.createLinearGradient(0,0,0,H); g.addColorStop(0,skies[0]); g.addColorStop(1,skies[1]); X.fillStyle=g; X.fillRect(0,0,W,H);
+  X.fillStyle='rgba(255,214,120,.5)'; X.beginPath(); X.arc(1050,120,90,0,7); X.fill(); X.fillStyle='#FFD36B'; X.beginPath(); X.arc(1050,120,40,0,7); X.fill();
+  X.fillStyle={home:'#5E8F45',farm:'#C9A86A',shop:'#8A8F98',hut:'#7D9B4A',factory:'#8A8F98'}[s]; X.fillRect(0,470,W,330);
+  if(s==='home'){ X.fillStyle='#E9D6B0'; X.fillRect(420,300,420,220); X.fillStyle='#B5532F'; X.beginPath(); X.moveTo(400,300); X.lineTo(630,170); X.lineTo(860,300); X.fill(); X.fillStyle='#3E6E8E'; X.fillRect(470,360,80,60); X.fillRect(710,360,80,60); X.fillStyle='#7A4B2A'; X.fillRect(600,400,60,120); }
+  if(s==='farm'){ X.strokeStyle='#6E8A3A'; X.lineWidth=6; for(let i=0;i<20;i++){ X.beginPath(); X.moveTo(i*70,520); X.lineTo(i*70+30,800); X.stroke(); } X.fillStyle='#777'; X.beginPath(); X.ellipse(820,560,60,18,0,0,7); X.fill(); X.fillStyle='#555'; X.fillRect(790,500,60,60); X.fillStyle='rgba(90,167,255,.7)'; X.fillRect(860,540+Math.sin(T*5)*3,120,10); }
+  if(s==='shop'){ X.fillStyle='#D9C7A5'; X.fillRect(380,260,520,260); X.fillStyle='#E0362E'; X.fillRect(370,240,540,40); X.fillStyle='#fff'; X.font='700 28px Outfit'; X.fillText(job?job.title.toUpperCase():'',400,270); X.fillStyle='#2A2A2A'; X.fillRect(440,320,400,200); X.fillStyle=(Math.sin(T*2)>0)?'#FFE08A':'#333'; X.fillRect(460,340,60,40); }
+  if(s==='hut'){ X.fillStyle='#C59A63'; X.fillRect(480,330,320,190); X.fillStyle='#8E6B3A'; X.beginPath(); X.moveTo(450,340); X.lineTo(640,220); X.lineTo(830,340); X.fill(); X.fillStyle='#5B3A1F'; X.fillRect(610,410,60,110); X.fillStyle='rgba(255,230,150,'+(.4+.3*Math.sin(T*3))+')'; X.beginPath(); X.arc(540,400,24,0,7); X.fill(); }
+  if(s==='factory'){ X.fillStyle='#C9CDD3'; X.fillRect(260,250,760,270); X.fillStyle='#9AA1AB'; for(let i=0;i<24;i++) X.fillRect(260+i*32,250,3,270); X.fillStyle='#7F8792'; X.beginPath(); X.moveTo(240,252); X.lineTo(640,170); X.lineTo(1040,252); X.fill(); X.fillStyle='#5E6670'; X.fillRect(1060,140,40,380); X.fillStyle='rgba(200,200,200,.5)'; X.beginPath(); X.arc(1080,120-((T*30)%60),30,0,7); X.fill(); }
+  person(300,600,1.4,'#F99B02'); person(980,620,1.3,'#2F5D9E');
+  requestAnimationFrame(draw); }
+/* game */
+const G={jobs:[], j:0, st:0, score:0, tries:0};
+const best=()=>((SS.records('gadget').best||{}).score||0);
+document.getElementById('best').textContent=best();
+function newGame(){ G.jobs=shuffle(GENS).map(f=>f()); G.j=0; G.st=0; G.score=0; show(); }
+function prog(){ document.getElementById('prog').innerHTML=G.jobs.map((_,i)=>'<i class="'+(i<G.j?'done':i===G.j?'on':'')+'"></i>').join(''); }
+function brief(){ const b=document.getElementById('brief'); b.innerHTML='<h2>'+SS.esc(job.title)+' · <em>'+SS.esc(job.who)+'</em></h2><p>'+SS.esc(job.story)+'</p><div class="facts">'+job.facts.map(f=>'<span>'+SS.esc(f)+'</span>').join('')+'</div>'; }
+function show(){ job=G.jobs[G.j]; document.getElementById('jobn').textContent=G.j+1; document.getElementById('score').textContent=G.score; prog(); brief();
+  const step=job.steps[G.st]; G.tries=0; const p=document.getElementById('play');
+  p.innerHTML='<div class="step">'+SS.esc(step.q)+'<small>Step '+(G.st+1)+' of '+job.steps.length+'</small></div><div class="cards" id="cards"></div><div class="exp" id="exp"></div><div class="row" style="display:flex; gap:8px; flex-wrap:wrap"><button class="ss-btn alt sm" type="button" id="hint">Hint (−20)</button><button class="ss-btn sm" type="button" id="next" hidden>Next</button></div>';
+  const cards=document.getElementById('cards'); const opts=shuffle(step.opts); const cvs=[];
+  opts.forEach(o=>{ const b=document.createElement('button'); b.className='card'; b.type='button'; b.innerHTML='<canvas width="340" height="220"></canvas><b></b><small></small><span class="price"></span>'; b.querySelector('b').textContent=o.name; b.querySelector('small').textContent=o.spec; b.querySelector('.price').textContent=o.price; cards.appendChild(b); cvs.push([b.querySelector('canvas'),o.icon]);
+    b.onclick=()=>{ if(b.dataset.done) return; fx.pick(); if(o.ok){ cards.querySelectorAll('.card').forEach(x=>x.dataset.done=1); b.classList.add('ok'); const pts=G.tries===0?100:G.tries===1?50:20; G.score+=pts; document.getElementById('score').textContent=G.score; document.getElementById('exp').textContent='✓ +'+pts+' · '+o.why; fx.ok(); document.getElementById('next').hidden=false; }
+      else { b.classList.add('no'); b.dataset.done=1; G.tries++; document.getElementById('exp').textContent='✗ '+o.why; fx.no(); } }; });
+  let tt=0; const anim=()=>{ if(!document.body.contains(cvs[0][0])) return; tt+=.03; cvs.forEach(([c,ic])=>{ const g=c.getContext('2d'); g.clearRect(0,0,340,220); drawIcon(g,ic,170,110,150,tt); }); requestAnimationFrame(anim); }; anim();
+  document.getElementById('hint').onclick=e=>{ G.score=Math.max(0,G.score-20); document.getElementById('score').textContent=G.score; document.getElementById('exp').textContent='Hint: '+step.hint; e.target.disabled=true; };
+  document.getElementById('next').onclick=()=>{ G.st++; if(G.st>=job.steps.length){ G.st=0; G.j++; } if(G.j>=G.jobs.length) return finish(); show(); }; }
+function finish(){ fx.win(); prog(); const max=1500, stars=G.score>=1300?3:G.score>=1000?2:1; const r=SS.record('gadget','best',{score:G.score,stars}); SS.addXP(G.score/5); if(stars===3) SS.badge('gg-guru','Gadget Guru');
+  document.getElementById('best').textContent=r.score;
+  document.getElementById('play').innerHTML='<div class="end"><h2>Shift over, <em>'+SS.esc(SS.me().name)+'</em></h2><p class="ss-small">You equipped 5 clients. Score '+G.score+' of '+max+' · '+'★'.repeat(stars)+'☆'.repeat(3-stars)+'</p><button class="ss-btn" type="button" id="again">New clients</button>'+(SS.signedIn()?'':' <button class="ss-btn alt" type="button" id="acc">Save with an account</button>')+'</div>';
+  document.getElementById('again').onclick=newGame; const a=document.getElementById('acc'); if(a) a.onclick=()=>SS.openAuth('up'); }
+newGame(); draw();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Abhi Thik Karke Deta Hu</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="shared.css">
+<style>
+.bd{display:grid; grid-template-columns:260px minmax(0,1fr); gap:14px; padding-block:14px}
+@media (max-width:900px){ .bd{grid-template-columns:minmax(0,1fr)} }
+.list{background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:12px; display:grid; gap:6px; align-content:start}
+.list h2{margin:0 0 4px; font:800 18px var(--display)}
+.sys{all:unset; cursor:pointer; padding:9px 10px; border-radius:10px; display:flex; justify-content:space-between; gap:8px; font:600 14px var(--display); border:1px solid transparent}
+.sys:hover{border-color:var(--line)} .sys[aria-current="true"]{background:var(--sun); color:var(--navy)} .sys.lock{opacity:.4; cursor:not-allowed} .sys:focus-visible{outline:3px solid #fff}
+.sys small{font-weight:500}
+.main{min-width:0}
+.board{position:relative; border-radius:18px; overflow:hidden; background:#081226; aspect-ratio:16/7; max-width:100%; border:1px solid var(--line)}
+.board canvas{position:absolute; inset:0; width:100%; height:100%}
+.head{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:space-between; margin-bottom:10px}
+.head h1{margin:0; font:800 clamp(20px,3vw,30px) var(--display)} .head h1 em{font-style:normal; color:var(--sun)}
+.desc{color:var(--muted); margin:2px 0 10px}
+.tray{display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:8px; margin-top:12px}
+.part{all:unset; cursor:grab; background:linear-gradient(180deg,#2A2522,#0F1D38); border:2px solid var(--line); border-radius:12px; padding:8px; display:grid; gap:4px; text-align:center; touch-action:none}
+.part canvas{width:100%; height:70px}
+.part b{font:600 12px var(--display); line-height:1.25}
+.part i{font-style:normal; font-size:11px; color:var(--muted); line-height:1.25}
+.tray h3{grid-column:1/-1; margin:8px 0 0; font:700 13px var(--display); color:var(--sun); letter-spacing:.06em; text-transform:uppercase}
+.jobs{background:rgba(253,166,4,.1); border:1px solid rgba(253,166,4,.35); border-radius:12px; padding:8px 12px; color:#FFE3A8; font-size:14px; margin:0 0 10px}
+.part[aria-pressed="true"]{border-color:var(--sun); box-shadow:0 0 0 3px rgba(253,166,4,.3)} .part.used{opacity:.3; pointer-events:none} .part:focus-visible{outline:3px solid #fff}
+.msg{min-height:48px; margin-top:10px; font-size:15px; color:#FFD98A}
+.ctrl{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
+.unlock{position:fixed; inset:0; z-index:90; display:grid; place-items:center; background:radial-gradient(circle at 50% 45%, rgba(253,166,4,.25), rgba(8,10,20,.92) 60%); padding:16px}
+.unlock[hidden]{display:none}
+.uk{background:linear-gradient(160deg,#2A2522,#13111A); border:2px solid #FFD36B; border-radius:20px; padding:22px; max-width:440px; width:100%; text-align:center; position:relative; overflow:hidden}
+.uk h2{margin:6px 0 0; font:800 28px var(--display)} .uk h2 em{font-style:normal; color:var(--sun)}
+.uk p{color:var(--muted); margin:8px 0 0}
+.uk svg{width:200px; height:200px; display:block; margin:0 auto}
+.uk .shackle{transition:transform .5s cubic-bezier(.3,1.6,.5,1) .1s; transform-origin:130px 60px}
+.uk.open .shackle{transform:translateY(-26px) rotate(-28deg)}
+.uk .key{transition:transform .7s ease-out; transform:translate(-160px,0)}
+.uk.in .key{transform:translate(0,0)}
+.uk.turn .keyhead{transition:transform .35s ease-in; transform:scaleY(.3); transform-origin:100px 132px}
+.uk .burst{opacity:0; transition:opacity .3s, transform .6s; transform-origin:100px 110px; transform:scale(.4)}
+.uk.open .burst{opacity:1; transform:scale(1.15)}
+.uk .stg{display:inline-block; margin-top:6px; font:700 13px var(--display); color:#1E1B1A; background:#FFD36B; border-radius:999px; padding:4px 12px}
+@media (prefers-reduced-motion: reduce){ .uk *{transition:none!important} }
+</style>
+</head>
+<body>
+<main class="ss-wrap bd">
+  <aside class="list" aria-label="Stages"><h2>10 stages</h2><div id="syslist"></div><button class="ss-btn alt sm" type="button" id="random">🎲 Random challenge</button><button class="ss-btn alt sm" type="button" id="snd">🔊 Sound on</button></aside>
+  <section class="main">
+    <div class="head"><h1 id="title">Abhi Thik <em>Karke Deta Hu</em></h1><div><span class="ss-chip">Score <b id="score">0</b></span> <span class="ss-chip">Time <b id="time">0:00</b></span></div></div>
+    <p class="desc" id="desc"></p><p class="jobs" id="jobs"></p>
+    <div class="board"><canvas id="bc" width="1400" height="612" aria-label="Wiring board"></canvas></div>
+    <div class="msg" id="msg" aria-live="polite">Tap a part, then tap a slot on the board. Or drag parts onto slots.</div>
+    <div class="ctrl"><button class="ss-btn" type="button" id="power">⚡ Power on</button><button class="ss-btn alt" type="button" id="clear">Clear board</button><button class="ss-btn alt" type="button" id="hint">Hint (−30)</button></div>
+    <div class="tray" id="tray"></div>
+  </section>
+</main>
+<div class="unlock" id="unlock" hidden><div class="uk" id="uk" role="dialog" aria-modal="true" aria-labelledby="ukT">
+  <svg viewBox="0 0 200 200" aria-hidden="true">
+    <g class="burst"><circle cx="100" cy="110" r="70" fill="rgba(255,211,107,.18)"/><g stroke="#FFD36B" stroke-width="5" stroke-linecap="round"><line x1="148" y1="110" x2="180" y2="110"/><line x1="134" y1="144" x2="157" y2="167"/><line x1="100" y1="158" x2="100" y2="190"/><line x1="66" y1="144" x2="43" y2="167"/><line x1="52" y1="110" x2="20" y2="110"/><line x1="66" y1="76" x2="43" y2="53"/><line x1="100" y1="62" x2="100" y2="30"/><line x1="134" y1="76" x2="157" y2="53"/></g></g>
+    <path class="shackle" d="M70 92 V62 a30 30 0 0 1 60 0 V92" fill="none" stroke="#C9CDD6" stroke-width="12" stroke-linecap="round"/>
+    <rect x="52" y="88" width="96" height="84" rx="16" fill="#D77804"/><rect x="52" y="88" width="96" height="14" rx="7" fill="#FFD36B" opacity=".5"/>
+    <circle cx="100" cy="126" r="11" fill="#1E1B1A"/><rect x="96" y="128" width="8" height="22" rx="3" fill="#1E1B1A"/>
+    <g class="key"><g class="keyhead"><circle cx="40" cy="132" r="15" fill="none" stroke="#FFD36B" stroke-width="7"/><rect x="54" y="129" width="46" height="6" rx="3" fill="#FFD36B"/><rect x="84" y="135" width="5" height="9" fill="#FFD36B"/><rect x="92" y="135" width="5" height="7" fill="#FFD36B"/></g></g>
+  </svg>
+  <span class="stg" id="ukS">Stage 2 of 10</span>
+  <h2 id="ukT">Stage <em>unlocked!</em></h2>
+  <p id="ukP"></p>
+  <button class="ss-btn" type="button" id="ukGo" style="margin-top:16px">Enter stage 2 →</button> <button class="ss-btn alt" type="button" id="ukStay" style="margin-top:16px">Stay here</button>
+</div></div>
+<script src="account.js"></script>
+<script src="icons.js"></script>
+<script src="build-variants.js"></script>
+<script>
+(()=>{
+SS.mountHeader('build');
+let AC=null,M=null,on=true,mt=null; const tn=(f,d=.15,ty='sine',v=.2,w=0)=>{ if(!AC||!on) return; const t=AC.currentTime+w,o=AC.createOscillator(),g=AC.createGain(); o.type=ty; o.frequency.setValueAtTime(f,t); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(v,t+.015); g.gain.exponentialRampToValueAtTime(.0001,t+d); o.connect(g); g.connect(M); o.start(t); o.stop(t+d+.05); };
+const noise=(d=.3,v=.2)=>{ if(!AC||!on) return; const b=AC.createBuffer(1,AC.sampleRate*d,AC.sampleRate),a=b.getChannelData(0); for(let i=0;i<a.length;i++) a[i]=(Math.random()*2-1)*(1-i/a.length); const s=AC.createBufferSource(),g=AC.createGain(); s.buffer=b; g.gain.value=v; s.connect(g); g.connect(M); s.start(); };
+const fx={place:()=>tn(520,.08,'triangle',.12), hum:()=>{ tn(110,1.2,'sawtooth',.05); tn(220,1.2,'sine',.05); }, ok:()=>[523,659,784,1046].forEach((f,i)=>tn(f,.25,'triangle',.15,i*.1)), spark:()=>{ noise(.35,.3); tn(90,.3,'square',.08); }};
+const startAudio=()=>{ if(!AC){ try{AC=new (window.AudioContext||window.webkitAudioContext)(); M=AC.createGain(); M.gain.value=.5; M.connect(AC.destination);}catch(_){} } if(!AC) return; AC.resume&&AC.resume(); clearInterval(mt); if(on){ let s=0; mt=setInterval(()=>{ tn([196,247,294,330][s%4],.2,'triangle',.03); if(s%8===0) tn(98,.8,'sine',.04); s++; },260);} };
+addEventListener('pointerdown',()=>{ if(!AC) startAudio(); },{once:true});
+document.getElementById('snd').onclick=e=>{ on=!on; e.target.textContent=on?'🔊 Sound on':'🔇 Sound off'; startAudio(); if(!on) clearInterval(mt); };
+const shuffle=a=>{a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a;};
+/* parts library */
+const P={
+ p5:['5 W mini panel','panel-s'], p10:['10 W panel','panel-s'], p100:['100 W panel','panel'], p2x330:['2 × 330 W panels','panel'], str6:['String: 6 × 550 W','panel'], str9:['String: 9 × 550 W','panel'], str20:['2 strings × 10 × 550 W','array'], arr100:['182 × 550 W array','array'], arr1mw:['1,820 × 550 W array','array'], arr3k:['3 kWp array','array'],
+ mini:['Mini controller + dusk sensor','controller'], usb:['USB charge controller','controller'], mppt30:['MPPT controller 30 A','controller'], mpptsl:['MPPT controller + dusk sensor','controller'], pwm5:['Tiny 5 W PWM controller','controller'],
+ cell:['3.2 V LFP cell','battery'], b12:['12 Wh LFP pack','battery'], b100:['12.8 V 100 Ah LFP','battery'], b10k:['10 kWh LFP battery','battery'], b70:['12.8 V 70 Ah LFP','battery'], car:['Car battery 12 V lead-acid','car-battery'],
+ led1:['LED garden lamp','led'], lamp:['LED study lamp','led'], loads:['Lights, fan, phone','fan'], led30:['30 W LED head','led'], bulb60:['60 W AC bulb','bulb'],
+ offinv:['Off-grid inverter 1 kVA','inv-off'], inv3:['On-grid inverter 3 kW','inverter'], hyb5:['Hybrid inverter 5 kW','hybrid'], inv10:['3-phase inverter 10 kW','inv-3ph'], inv100:['100 kW string inverters','inv-3ph'], central:['Central inverters 1 MW','inv-3ph'],
+ spd:['DC isolator + SPD','isolator'], comb:['DC combiner box + SPD','combiner'], scb:['String combiner boxes','combiner'],
+ acdb:['ACDB with MCB + SPD','acdb'], acdbr:['ACDB with RCD','acdb'], lt:['LT panel (AC breakers)','acdb'], fuse6:['6 A house fuse','acdb'],
+ net:['Net meter (bi-directional)','meter'], exp:['Export meter','meter'], grid:['Grid','grid'], trafo:['Step-up transformer 0.4/11 kV','transformer'], sub:['11 kV substation','substation'],
+ vfd:['Pump controller (VFD)','vfd'], pump3:['3 HP submersible pump','pump'], tank:['Water tank','tank'], acpump:['1 HP AC surface pump','ac-pump'],
+ adapter:['Grid phone adapter','adapter'], thin:['1.5 mm² house wire','thin-cable']
+};
+const WHY={ car:'A car battery isn’t made for daily deep cycling and is far too big here.', bulb60:'An AC bulb needs an inverter and wastes power; use LED.', inv3:'An on-grid inverter needs the grid and switches off without it.', offinv:'Off-grid inverters can’t export to the grid or claim net metering.', pwm5:'Far too small for this panel.', adapter:'Needs grid power; there is none.', thin:'House wire is not rated for DC or sunlight.', fuse6:'A 6 A fuse is not a solar AC protection board.', acpump:'A surface pump can’t lift from a deep borewell.', b10k:'A home battery isn’t needed for this system.', car2:'—' };
+/* systems: slots in power-flow order */
+const SYS=[
+ {n:'Garden light', d:'Solar light that turns on at dusk.', s:['p5','mini','cell','led1'], dec:['car','bulb60','inv3']},
+ {n:'Study lamp', d:'A lamp a student can charge in sunlight and use at night.', s:['p10','usb','b12','lamp'], dec:['adapter','bulb60','car']},
+ {n:'Off-grid hut', d:'Lights, a fan and phone charging with no grid at all.', s:['p2x330','mppt30','b100','offinv','loads'], dec:['inv3','pwm5','car']},
+ {n:'Solar streetlight', d:'A village pole light that runs 12 hours a night.', s:['p100','mpptsl','b70','led30'], dec:['car','bulb60','inv3']},
+ {n:'3 kW on-grid home', d:'Rooftop system with net metering under PM Surya Ghar.', s:['str6','spd','inv3','acdb','net','grid'], dec:['offinv','car','fuse6']},
+ {n:'5 kW hybrid home', d:'Rooftop with battery backup for power cuts.', s:['str9','spd','hyb5','b10k','acdb','net'], dec:['inv3','car','thin']},
+ {n:'3 HP solar pump', d:'PM-KUSUM pump for a 120 ft borewell.', s:['arr3k','spd','vfd','pump3','tank'], dec:['inv3','acpump','car']},
+ {n:'10 kW shop', d:'Three-phase rooftop for a busy shop.', s:['str20','comb','inv10','acdbr','net','grid'], dec:['inv3','thin','fuse6']},
+ {n:'100 kW factory', d:'Factory roof feeding its own LT panel.', s:['arr100','scb','inv100','lt','exp','grid'], dec:['inv10','acdb','b10k']},
+ {n:'1 MW solar farm', d:'Ground-mounted plant feeding the 11 kV network.', s:['arr1mw','scb','central','lt','trafo','sub'], dec:['inv100','net','acdb']}
+];
+const SLOTNAME={p5:'Panel',p10:'Panel',p100:'Panel',p2x330:'Panels',str6:'Panels',str9:'Panels',str20:'Panels',arr100:'Array',arr1mw:'Array',arr3k:'Array',mini:'Controller',usb:'Controller',mppt30:'Controller',mpptsl:'Controller',cell:'Storage',b12:'Storage',b100:'Storage',b10k:'Battery (on inverter)',b70:'Storage',led1:'Load',lamp:'Load',loads:'Load',led30:'Load',offinv:'Inverter',inv3:'Inverter',hyb5:'Inverter',inv10:'Inverter',inv100:'Inverter',central:'Inverter',spd:'DC protection',comb:'DC protection',scb:'DC combining',acdb:'AC protection',acdbr:'AC protection',lt:'AC panel',net:'Meter',exp:'Meter',grid:'Grid',trafo:'Transformer',sub:'Substation',vfd:'Pump drive',pump3:'Pump',tank:'Water'};
+/* state */
+const ST={i:0, slots:[], sel:null, score:0, t0:0, flow:0, bad:-1, won:false, hinted:false, done:SS.records('build')};
+const cv=document.getElementById('bc'), X=cv.getContext('2d'), W=1400, H=612;
+function geom(){ const n=SYS[ST.i].s.length, gap=W/(n+.4), w=Math.min(180,gap-30); return {n,gap,w,h:170,y:250, x:i=>gap*(.7+i)-w/2}; }
+function draw(){ const t=performance.now()/1000; X.fillStyle='#081226'; X.fillRect(0,0,W,H);
+  X.strokeStyle='rgba(255,255,255,.04)'; for(let x=0;x<W;x+=40){ X.beginPath(); X.moveTo(x,0); X.lineTo(x,H); X.stroke(); } for(let y=0;y<H;y+=40){ X.beginPath(); X.moveTo(0,y); X.lineTo(W,y); X.stroke(); }
+  const g=geom(), sys=SYS[ST.i];
+  for(let i=0;i<g.n-1;i++){ const x1=g.x(i)+g.w, x2=g.x(i+1), y=g.y+g.h/2; X.strokeStyle=ST.flow>0?'#10B981':'#3D3632'; X.lineWidth=ST.flow>0?6:4; X.beginPath(); X.moveTo(x1,y); X.lineTo(x2,y); X.stroke();
+    if(ST.flow>0){ for(let k=0;k<3;k++){ const p=((t*1.4+k/3)%1); X.fillStyle='#FDA604'; X.shadowColor='#FDA604'; X.shadowBlur=14; X.beginPath(); X.arc(x1+(x2-x1)*p,y,6,0,7); X.fill(); X.shadowBlur=0; } } }
+  for(let i=0;i<g.n;i++){ const x=g.x(i), y=g.y, id=ST.slots[i]; const bad=ST.bad===i;
+    X.fillStyle=bad?'rgba(255,107,107,.18)':(id?'#2A2522':'rgba(255,255,255,.03)'); X.strokeStyle=bad?'#FF6B6B':(ST.sel&&!id?'#FDA604':'#3D3632'); X.lineWidth=bad?4:2; X.setLineDash(id?[]:[10,8]); X.beginPath(); X.roundRect(x,y,g.w,g.h,16); X.fill(); X.stroke(); X.setLineDash([]);
+    X.fillStyle='#B3ABA3'; X.font='600 18px Outfit'; X.textAlign='center'; X.fillText(SLOTNAME[sys.s[i]]||'Part',x+g.w/2,y-14);
+    if(id){ drawIcon(X,P[id][1],x+g.w/2,y+g.h/2-16,Math.min(130,g.w*.75),t); X.fillStyle='#F5F2EC'; X.font='600 15px Outfit'; wrap(P[id][0],x+g.w/2,y+g.h-26,g.w-16); } else { X.fillStyle='#4E5E80'; X.font='500 16px Outfit'; X.fillText(ST.sel?'tap to place':'empty',x+g.w/2,y+g.h/2+6); }
+    if(bad){ for(let k=0;k<8;k++){ const a=t*20+k; X.strokeStyle='#FFE66B'; X.lineWidth=3; X.beginPath(); X.moveTo(x+g.w/2,y+20); X.lineTo(x+g.w/2+Math.cos(a)*40,y+20+Math.sin(a)*40); X.stroke(); } } }
+  X.textAlign='left';
+  if(ST.flow>0){ X.fillStyle='rgba(16,185,129,.95)'; X.font='800 34px Outfit'; X.textAlign='center'; X.fillText('Abhi thik ho gaya! ⚡',W/2,110); X.textAlign='left'; }
+  requestAnimationFrame(draw); }
+function wrap(text,cx,y,maxw){ const words=text.split(' '); let line='', lines=[]; words.forEach(w=>{ const t=line?line+' '+w:w; if(X.measureText(t).width>maxw&&line){ lines.push(line); line=w; } else line=t; }); lines.push(line); lines.slice(0,2).forEach((l,i)=>X.fillText(l,cx,y+i*18-(lines.length>1?9:0))); }
+function slotAt(px,py){ const g=geom(); for(let i=0;i<g.n;i++){ const x=g.x(i); if(px>=x&&px<=x+g.w&&py>=g.y-30&&py<=g.y+g.h) return i; } return -1; }
+function toBoard(e){ const r=cv.getBoundingClientRect(); return [(e.clientX-r.left)*W/r.width,(e.clientY-r.top)*H/r.height]; }
+cv.addEventListener('pointerdown',e=>{ const [x,y]=toBoard(e); const i=slotAt(x,y); if(i<0) return; if(ST.slots[i]&&!ST.sel){ ST.slots[i]=null; renderTray(); return; } if(ST.sel){ place(ST.sel,i); } });
+function place(id,i){ if(ST.won) return; ST.slots[i]=id; ST.sel=null; ST.bad=-1; ST.flow=0; fx.place(); renderTray(); }
+function renderList(){ const el=document.getElementById('syslist'); ST.done=SS.records('build');
+  el.innerHTML=SYS.map((s,i)=>{ const r=ST.done['s'+i], lock=i>0&&!ST.done['s'+(i-1)]&&!r; return '<button class="sys'+(lock?' lock':'')+'" type="button" data-i="'+i+'" aria-current="'+(i===ST.i)+'"'+(lock?' aria-disabled="true"':'')+'><span>'+(i+1)+'. '+s.n+'</span><small>'+(r?'★'.repeat(r.stars):lock?'🔒':'')+'</small></button>'; }).join('');
+  el.querySelectorAll('.sys').forEach(b=>b.onclick=()=>{ if(b.classList.contains('lock')) { SS.toast('Finish the system before it first'); return; } load(+b.dataset.i); }); }
+let trayParts=[], GROUP={}; const SPEC=Object.assign({},window.BD_SPEC), VAR=window.BD_VAR||{}, FACTS=window.BD_FACTS||[];
+function renderTray(){ const tr=document.getElementById('tray'); tr.innerHTML=''; let lastG=null; trayParts.forEach(id=>{ const grp=GROUP[id]||'Other parts'; if(grp!==lastG){ lastG=grp; const h=document.createElement('h3'); h.textContent=grp; tr.appendChild(h); } const used=ST.slots.includes(id); const b=document.createElement('button'); b.className='part'+(used?' used':''); b.type='button'; b.setAttribute('aria-pressed',ST.sel===id); b.innerHTML='<canvas width="240" height="140"></canvas><b></b><i></i>'; b.querySelector('b').textContent=P[id][0]; b.querySelector('i').textContent=SPEC[id]||''; tr.appendChild(b);
+  drawIcon(b.querySelector('canvas').getContext('2d'),P[id][1],120,70,110,0);
+  b.onclick=()=>{ if(ST.dropped){ ST.dropped=false; return; } ST.sel=ST.sel===id?null:id; fx.place(); renderTray(); document.getElementById('msg').textContent=ST.sel?'Now tap a slot on the board for: '+P[id][0]:'Tap a part, then a slot.'; };
+  b.addEventListener('pointerdown',e=>{ ST.drag=id; ST.dx=e.clientX; ST.dy=e.clientY; try{ b.setPointerCapture(e.pointerId); }catch(_){} });
+  b.addEventListener('pointerup',e=>{ if(ST.drag!==id) return; ST.drag=null; if(Math.hypot(e.clientX-ST.dx,e.clientY-ST.dy)<14) return; const r=cv.getBoundingClientRect(); if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom){ const [x,y]=toBoard(e); const i=slotAt(x,y); if(i>=0){ ST.dropped=true; place(id,i); } } }); }); }
+function load(i){ ST.i=i; const s=SYS[i]; ST.slots=new Array(s.s.length).fill(null); ST.sel=null; ST.bad=-1; ST.flow=0; ST.won=false; ST.hinted=false; ST.score=1000; ST.t0=performance.now();
+  GROUP={}; const nv=i<4?2:3; const pool=[];
+  s.s.forEach(id=>{ const g=SLOTNAME[id]||'Part'; const grp=[id]; GROUP[id]=g; (VAR[id]||[]).slice(0,nv).forEach((v,k)=>{ const vid='v_'+id+'_'+k; P[vid]=[v[0],P[id][1]]; SPEC[vid]=v[1]; WHY[vid]=v[2]; GROUP[vid]=g; grp.push(vid); }); pool.push(...shuffle(grp)); });
+  const names=new Set(pool.map(id=>P[id][0].toLowerCase())); const extra=shuffle(s.dec.filter(id=>!names.has(P[id][0].toLowerCase())&&!pool.some(v=>(P[v][0]||'').toLowerCase().includes(P[id][0].toLowerCase().split(' ')[0]+' ')&&GROUP[v]&&P[v][0].toLowerCase()===P[id][0].toLowerCase()))).slice(0,i<4?1:2); extra.forEach(id=>{ GROUP[id]='Other parts'; });
+  const order=[...new Set(s.s.map(id=>GROUP[id]))]; trayParts=[...order.flatMap(g=>pool.filter(id=>GROUP[id]===g)), ...extra];
+  document.getElementById('title').innerHTML='Stage '+(i+1)+' · '+SS.esc(s.n); document.getElementById('desc').textContent=s.d+' Build it from the panels to the end of the chain. Each part comes in 3–4 versions: read the specs and pick the right one.'; document.getElementById('jobs').textContent=FACTS[i]||'';
+  document.getElementById('msg').textContent='Tap a part, then tap a slot on the board. Or drag parts onto slots.'; document.getElementById('score').textContent=ST.score; renderList(); renderTray(); }
+document.getElementById('clear').onclick=()=>{ ST.slots.fill(null); ST.bad=-1; ST.flow=0; ST.won=false; renderTray(); };
+document.getElementById('hint').onclick=()=>{ const s=SYS[ST.i]; const k=ST.slots.findIndex((x,i)=>x!==s.s[i]); if(k<0) return; ST.score=Math.max(0,ST.score-30); document.getElementById('score').textContent=ST.score; document.getElementById('msg').textContent='Hint: slot '+(k+1)+' needs the '+P[s.s[k]][0]+'.'; };
+document.getElementById('random').onclick=()=>{ const unlocked=SYS.map((_,i)=>i).filter(i=>i===0||ST.done['s'+(i-1)]||ST.done['s'+i]); load(unlocked[Math.floor(Math.random()*unlocked.length)]); };
+document.getElementById('power').onclick=()=>{ const s=SYS[ST.i]; if(ST.slots.some(x=>!x)){ document.getElementById('msg').textContent='Fill every slot before powering on.'; fx.spark(); return; }
+  const k=ST.slots.findIndex((x,i)=>x!==s.s[i]);
+  if(k>=0){ ST.bad=k; ST.score=Math.max(0,ST.score-100); document.getElementById('score').textContent=ST.score; fx.spark(); const id=ST.slots[k]; const inChain=s.s.includes(id);
+    document.getElementById('msg').textContent='⚡ Spark at slot '+(k+1)+'! '+(String(id).startsWith('v_')?P[id][0]+': '+WHY[id]+'.':inChain?P[id][0]+' belongs elsewhere in the chain. Power flows panel → protection → conversion → distribution.':(WHY[id]||P[id][0]+' doesn’t belong in this system.')); return; }
+  ST.flow=1; ST.won=true; fx.hum(); setTimeout(fx.ok,400); const secs=Math.round((performance.now()-ST.t0)/1000); const final=Math.max(100,ST.score-Math.max(0,secs-30)*5); const stars=final>=900?3:final>=600?2:1;
+  SS.record('build','s'+ST.i,{stars,score:final}); SS.addXP(final/10); if(Object.keys(SS.records('build')).length===SYS.length) SS.badge('build-all','Master Electrician');
+  document.getElementById('score').textContent=final; document.getElementById('msg').textContent='Abhi thik ho gaya! '+s.n+' works. '+final+' points · '+'★'.repeat(stars)+'☆'.repeat(3-stars)+(ST.i<SYS.length-1?' Next system unlocked.':' All systems built!');
+  renderList(); if(ST.i<SYS.length-1) setTimeout(()=>unlockNext(ST.i+1),1400); else setTimeout(()=>unlockNext(-1),1400); };
+function unlockNext(n){ const ov=document.getElementById('unlock'), uk=document.getElementById('uk'); uk.className='uk'; ov.hidden=false;
+  const last=n<0; document.getElementById('ukS').textContent=last?'All 10 stages':'Stage '+(n+1)+' of 10';
+  document.getElementById('ukT').innerHTML=last?'Master <em>Electrician!</em>':'Stage <em>unlocked!</em>';
+  document.getElementById('ukP').textContent=last?'You wired every system from a garden light to a 1 MW farm. Abhi thik ho gaya!':'Next job: '+SYS[n].n+'. '+SYS[n].d;
+  const go=document.getElementById('ukGo'); go.textContent=last?'Play any stage again':'Enter stage '+(n+1)+' →'; go.disabled=true;
+  // key slides in, turns, lock opens
+  tn(220,.12,'square',.05); setTimeout(()=>{ uk.classList.add('in'); [880,660].forEach((f,i)=>tn(f,.06,'square',.06,.5+i*.08)); },60);
+  setTimeout(()=>{ uk.classList.add('turn'); tn(1200,.05,'square',.08); tn(1500,.05,'square',.08,.12); noise(.08,.15); },900);
+  setTimeout(()=>{ uk.classList.add('open'); tn(140,.25,'sawtooth',.08); [523,659,784,1046,1318].forEach((f,i)=>tn(f,.35,'triangle',.14,.15+i*.1)); go.disabled=false; go.focus(); },1350);
+  go.onclick=()=>{ ov.hidden=true; if(!last) load(n); };
+  document.getElementById('ukStay').onclick=()=>{ ov.hidden=true; }; }
+setInterval(()=>{ if(ST.won) return; const s=Math.round((performance.now()-ST.t0)/1000); document.getElementById('time').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); },500);
+load(0); draw();
+})();
+</script>
+</body>
+</html>
