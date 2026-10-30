@@ -17,9 +17,7 @@ let verb = null;
 let enabled = true;
 const listeners = new Set();
 
-function readPref() {
-  try { enabled = localStorage.getItem(KEY) !== 'off'; } catch { enabled = true; }
-}
+function readPref() { enabled = true; }
 
 function sfxOn() { return enabled; }
 function onSfxChange(fn) { listeners.add(fn); return () => { listeners.delete(fn); }; }
@@ -135,12 +133,5 @@ function installSfx() {
 }
 
 window.SosSfx = { play, setSfx, sfxOn, onSfxChange };
-function addToggle(){
-  var bar=document.querySelector('.ss-user')||document.querySelector('.ss-bar'); if(!bar||document.getElementById('sos-sfx'))return;
-  var b=document.createElement('button'); b.id='sos-sfx'; b.type='button'; b.className='ss-btn alt sm';
-  var draw=function(on){ b.textContent=on?'🔊':'🔇'; b.setAttribute('aria-pressed',String(on)); b.setAttribute('aria-label',on?'Turn sound effects off':'Turn sound effects on'); b.title=on?'Sound on':'Sound off'; };
-  b.addEventListener('click',function(){ setSfx(!sfxOn()); }); onSfxChange(draw); draw(sfxOn()); bar.insertBefore(b,bar.firstChild);
-}
 installSfx();
-if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',addToggle); else addToggle();
 })();
