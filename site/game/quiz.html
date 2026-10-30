@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="/fonts/fonts.css">
 <link rel="stylesheet" href="shared.css">
 <script src="sfx.js" defer></script>
+<script src="music.js" defer></script>
 <style>
 :root{ --night:#0B0A12; --navy:#0B1424; --sun:#FFCF4D; --gold:#FFD36B; --ink:#F5F2EC; --muted:#B9B2C8; --line:#3B3550; --good:#10B981; --bad:#FF6B6B; --bar:#120F2A;
   --display:'Outfit', system-ui, sans-serif; --body:'DM Sans', system-ui, sans-serif; color-scheme:dark }
@@ -58,7 +59,7 @@ body{margin:0; background:radial-gradient(ellipse at top, #241B3A, var(--night) 
 @media (prefers-reduced-motion: reduce){ *{transition:none!important} }
 </style>
 </head>
-<body>
+<body data-music="quiz">
 <div class="wrap">
   <div class="top">
     <h1>Kaun Banega <b>Solar Hero</b></h1>
@@ -145,7 +146,7 @@ function hostVoice(){ const vs=(window.speechSynthesis&&speechSynthesis.getVoice
   else { const en=vs.filter(v=>/^en/i.test(v.lang)); const pref=en.filter(v=>/en-(IN|GB|US)/i.test(v.lang)); p=pref.length?pref:en; }
   return p.find(v=>/(^|\W)male|rishi|hemant|prabhat|ravi|madhur|aarav|daniel|david/i.test(v.name)&&!/female/i.test(v.name))||p[0]||null; }
 let talking=0;
-function say(text,after){ if(!VOICE||!window.speechSynthesis){ after&&setTimeout(after,600); return; } try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text.replace(/₹/g,' rupees ').replace(/·/g,',')); const v=hostVoice(); if(v){u.voice=v;u.lang=v.lang;} else u.lang=LANG==='hi'?'hi-IN':'en-IN'; u.pitch=.82; u.rate=.95; u.onstart=()=>talking=1; u.onend=()=>{ talking=0; after&&after(); }; u.onerror=()=>{ talking=0; after&&after(); }; speechSynthesis.speak(u);}catch(e){ after&&after(); } }
+function say(text,after){ if(!VOICE||!window.speechSynthesis){ after&&setTimeout(after,600); return; } try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text.replace(/₹/g,' rupees ').replace(/·/g,',')); const v=hostVoice(); if(v){u.voice=v;u.lang=v.lang;} else u.lang=LANG==='hi'?'hi-IN':'en-IN'; u.pitch=.82; u.rate=.95; u.onstart=()=>{ talking=1; window.SosMusic&&window.SosMusic.duck(Math.min(12,1+text.length/14)); }; u.onend=()=>{ talking=0; after&&after(); }; u.onerror=()=>{ talking=0; after&&after(); }; speechSynthesis.speak(u);}catch(e){ after&&after(); } }
 try{ speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged=()=>{}; }catch(e){}
 /* ===================== STUDIO (canvas) ===================== */
 const cv=$('cv'), X=cv.getContext('2d'), W=1600, H=800; let t0=performance.now(); const AUD=[]; for(let r=0;r<3;r++) for(let i=0;i<26;i++) AUD.push({x:40+i*60+(r%2)*30, y:640+r*55, s:.9+r*.12, c:['#3B2E5A','#4A3A6E','#2E2448','#5A4A7E'][(i+r)%4], ph:Math.random()*6});

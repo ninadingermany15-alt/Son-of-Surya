@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="/fonts/fonts.css">
 <link rel="stylesheet" href="shared.css">
 <script src="sfx.js" defer></script>
+<script src="music.js" defer></script>
 <style>
 .bd{display:grid; grid-template-columns:260px minmax(0,1fr); gap:14px; padding-block:14px}
 @media (max-width:900px){ .bd{grid-template-columns:minmax(0,1fr)} }
@@ -49,7 +50,7 @@
 @media (prefers-reduced-motion: reduce){ .uk *{transition:none!important} }
 </style>
 </head>
-<body>
+<body data-music="build">
 <main class="ss-wrap bd">
   <aside class="list" aria-label="Stages"><h2>10 stages</h2><div id="syslist"></div><button class="ss-btn alt sm" type="button" id="random">🎲 Random challenge</button><button class="ss-btn alt sm" type="button" id="snd">🔊 Sound on</button></aside>
   <section class="main">

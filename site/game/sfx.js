@@ -1,10 +1,11 @@
+/* Surya Games copy of src/lib/sfx.ts (plain JS): site-wide sci-fi sounds. */
 (function(){
 /**
- * Surya Games copy of src/lib/sfx.ts (plain JS). Sci-fi sound effects, synthesised with the Web Audio API (no audio files).
+ * Sci-fi sound effects, synthesised with the Web Audio API (no audio files).
  *
  * Sounds start only after the visitor's first tap, click or key press
- * (browsers block audio before that). The mute switch in the header flips
- * `setSfx`, remembered per browser in localStorage `sos_sfx`.
+ * (browsers block audio before that). Sound stays on; visitors set the volume
+ * on their device. `setSfx` remains for code that needs to silence it.
  *
  * public/game/sfx.js is the same engine for the static game pages; keep the
  * two in step when changing a sound.
@@ -17,6 +18,7 @@ let verb = null;
 let enabled = true;
 const listeners = new Set();
 
+/** Sound is always on; visitors use their device volume. */
 function readPref() { enabled = true; }
 
 function sfxOn() { return enabled; }
@@ -102,6 +104,19 @@ const play = {
   /** error: short low buzz */
   error() { tone('square', 150, 110, 0.18, 0.05, { filter: [900, 300] }); },
   toggle(on) { tone('sine', on ? 600 : 900, on ? 1200 : 450, 0.12, 0.08, { wet: 0.3 }); },
+  /** ignition when the home story starts moving: low rumble rising into a bright shimmer */
+  ignite() {
+    tone('sawtooth', 55, 220, 1.1, 0.06, { filter: [180, 2400], attack: 0.35 });
+    tone('sine', 82, 330, 1.1, 0.08, { attack: 0.3, wet: 0.4 });
+    noise(1.0, 0.06, 300, 6000, { wet: 0.6, q: 0.7 });
+    tone('sine', 1760, 1760, 1.4, 0.03, { delay: 0.9, wet: 0.8 });
+  },
+  /** a scroll gesture begins: an airy swoosh, higher going down the page, lower going up */
+  swoosh(down) { noise(0.28, 0.045, down ? 600 : 2600, down ? 2600 : 600, { wet: 0.3, q: 1.8 }); },
+  /** soft HUD tick while scrolling keeps going */
+  scrollTick(speed) { const f = 900 + Math.min(1, speed) * 900; tone('triangle', f, f * 1.15, 0.03, 0.012 + Math.min(1, speed) * 0.012); },
+  /** tap on an empty part of the page */
+  tap() { tone('sine', 1300, 900, 0.05, 0.03, { wet: 0.2 }); },
 };
 
 const CLICKABLE = 'a[href], button, [role="button"], [role="tab"], [role="radio"], summary, input[type="checkbox"], input[type="radio"], select, label[for]';
@@ -124,6 +139,21 @@ function installSfx() {
       play.hover();
     }, { passive: true });
   }
+  // taps on empty space get a soft blip (links and buttons get the click sound below)
+  document.addEventListener('pointerdown', (e) => {
+    const t = e.target;
+    if (t?.closest?.(CLICKABLE) || t?.closest?.('input, textarea, canvas, [data-sfx="off"]')) return;
+    if (ctx?.state !== 'running') setTimeout(() => play.tap(), 40); else play.tap();
+  }, { capture: true, passive: true });
+  // scrolling: a swoosh when a scroll starts, then light ticks while it continues
+  let lastY = window.scrollY, lastT = 0, idleTimer = 0, moving = false, lastTick = 0;
+  window.addEventListener('scroll', () => {
+    const now = performance.now(), y = window.scrollY, dy = y - lastY, dt = Math.max(16, now - lastT);
+    lastY = y; lastT = now;
+    if (!moving) { moving = true; play.swoosh(dy >= 0); }
+    else if (now - lastTick > 160) { lastTick = now; play.scrollTick(Math.abs(dy) / dt / 3); }
+    clearTimeout(idleTimer); idleTimer = window.setTimeout(() => { moving = false; }, 380);
+  }, { passive: true });
   document.addEventListener('click', (e) => {
     const el = e.target?.closest?.(CLICKABLE);
     if (!el || el.dataset.sfx === 'off') return;
