@@ -5,8 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Abhi Thik Karke Deta Hu</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/fonts/fonts.css">
 <link rel="stylesheet" href="shared.css">
+<script src="sfx.js" defer></script>
 <style>
 .bd{display:grid; grid-template-columns:260px minmax(0,1fr); gap:14px; padding-block:14px}
 @media (max-width:900px){ .bd{grid-template-columns:minmax(0,1fr)} }
@@ -22,7 +23,7 @@
 .head h1{margin:0; font:800 clamp(20px,3vw,30px) var(--display)} .head h1 em{font-style:normal; color:var(--sun)}
 .desc{color:var(--muted); margin:2px 0 10px}
 .tray{display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:8px; margin-top:12px}
-.part{all:unset; cursor:grab; background:linear-gradient(180deg,#2A2522,#0F1D38); border:2px solid var(--line); border-radius:12px; padding:8px; display:grid; gap:4px; text-align:center; touch-action:none}
+.part{all:unset; cursor:grab; background:linear-gradient(180deg,#13213A,#0F1D38); border:2px solid var(--line); border-radius:12px; padding:8px; display:grid; gap:4px; text-align:center; touch-action:none}
 .part canvas{width:100%; height:70px}
 .part b{font:600 12px var(--display); line-height:1.25}
 .part i{font-style:normal; font-size:11px; color:var(--muted); line-height:1.25}
@@ -33,7 +34,7 @@
 .ctrl{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
 .unlock{position:fixed; inset:0; z-index:90; display:grid; place-items:center; background:radial-gradient(circle at 50% 45%, rgba(253,166,4,.25), rgba(8,10,20,.92) 60%); padding:16px}
 .unlock[hidden]{display:none}
-.uk{background:linear-gradient(160deg,#2A2522,#13111A); border:2px solid #FFD36B; border-radius:20px; padding:22px; max-width:440px; width:100%; text-align:center; position:relative; overflow:hidden}
+.uk{background:linear-gradient(160deg,#13213A,#13111A); border:2px solid #FFD36B; border-radius:20px; padding:22px; max-width:440px; width:100%; text-align:center; position:relative; overflow:hidden}
 .uk h2{margin:6px 0 0; font:800 28px var(--display)} .uk h2 em{font-style:normal; color:var(--sun)}
 .uk p{color:var(--muted); margin:8px 0 0}
 .uk svg{width:200px; height:200px; display:block; margin:0 auto}
@@ -44,7 +45,7 @@
 .uk.turn .keyhead{transition:transform .35s ease-in; transform:scaleY(.3); transform-origin:100px 132px}
 .uk .burst{opacity:0; transition:opacity .3s, transform .6s; transform-origin:100px 110px; transform:scale(.4)}
 .uk.open .burst{opacity:1; transform:scale(1.15)}
-.uk .stg{display:inline-block; margin-top:6px; font:700 13px var(--display); color:#1E1B1A; background:#FFD36B; border-radius:999px; padding:4px 12px}
+.uk .stg{display:inline-block; margin-top:6px; font:700 13px var(--display); color:#0B1424; background:#FFD36B; border-radius:999px; padding:4px 12px}
 @media (prefers-reduced-motion: reduce){ .uk *{transition:none!important} }
 </style>
 </head>
@@ -64,8 +65,8 @@
   <svg viewBox="0 0 200 200" aria-hidden="true">
     <g class="burst"><circle cx="100" cy="110" r="70" fill="rgba(255,211,107,.18)"/><g stroke="#FFD36B" stroke-width="5" stroke-linecap="round"><line x1="148" y1="110" x2="180" y2="110"/><line x1="134" y1="144" x2="157" y2="167"/><line x1="100" y1="158" x2="100" y2="190"/><line x1="66" y1="144" x2="43" y2="167"/><line x1="52" y1="110" x2="20" y2="110"/><line x1="66" y1="76" x2="43" y2="53"/><line x1="100" y1="62" x2="100" y2="30"/><line x1="134" y1="76" x2="157" y2="53"/></g></g>
     <path class="shackle" d="M70 92 V62 a30 30 0 0 1 60 0 V92" fill="none" stroke="#C9CDD6" stroke-width="12" stroke-linecap="round"/>
-    <rect x="52" y="88" width="96" height="84" rx="16" fill="#D77804"/><rect x="52" y="88" width="96" height="14" rx="7" fill="#FFD36B" opacity=".5"/>
-    <circle cx="100" cy="126" r="11" fill="#1E1B1A"/><rect x="96" y="128" width="8" height="22" rx="3" fill="#1E1B1A"/>
+    <rect x="52" y="88" width="96" height="84" rx="16" fill="#FFCF4D"/><rect x="52" y="88" width="96" height="14" rx="7" fill="#FFD36B" opacity=".5"/>
+    <circle cx="100" cy="126" r="11" fill="#0B1424"/><rect x="96" y="128" width="8" height="22" rx="3" fill="#0B1424"/>
     <g class="key"><g class="keyhead"><circle cx="40" cy="132" r="15" fill="none" stroke="#FFD36B" stroke-width="7"/><rect x="54" y="129" width="46" height="6" rx="3" fill="#FFD36B"/><rect x="84" y="135" width="5" height="9" fill="#FFD36B"/><rect x="92" y="135" width="5" height="7" fill="#FFD36B"/></g></g>
   </svg>
   <span class="stg" id="ukS">Stage 2 of 10</span>
@@ -124,7 +125,7 @@ function draw(){ const t=performance.now()/1000; X.fillStyle='#081226'; X.fillRe
   for(let i=0;i<g.n-1;i++){ const x1=g.x(i)+g.w, x2=g.x(i+1), y=g.y+g.h/2; X.strokeStyle=ST.flow>0?'#10B981':'#3D3632'; X.lineWidth=ST.flow>0?6:4; X.beginPath(); X.moveTo(x1,y); X.lineTo(x2,y); X.stroke();
     if(ST.flow>0){ for(let k=0;k<3;k++){ const p=((t*1.4+k/3)%1); X.fillStyle='#FDA604'; X.shadowColor='#FDA604'; X.shadowBlur=14; X.beginPath(); X.arc(x1+(x2-x1)*p,y,6,0,7); X.fill(); X.shadowBlur=0; } } }
   for(let i=0;i<g.n;i++){ const x=g.x(i), y=g.y, id=ST.slots[i]; const bad=ST.bad===i;
-    X.fillStyle=bad?'rgba(255,107,107,.18)':(id?'#2A2522':'rgba(255,255,255,.03)'); X.strokeStyle=bad?'#FF6B6B':(ST.sel&&!id?'#FDA604':'#3D3632'); X.lineWidth=bad?4:2; X.setLineDash(id?[]:[10,8]); X.beginPath(); X.roundRect(x,y,g.w,g.h,16); X.fill(); X.stroke(); X.setLineDash([]);
+    X.fillStyle=bad?'rgba(255,107,107,.18)':(id?'#13213A':'rgba(255,255,255,.03)'); X.strokeStyle=bad?'#FF6B6B':(ST.sel&&!id?'#FDA604':'#3D3632'); X.lineWidth=bad?4:2; X.setLineDash(id?[]:[10,8]); X.beginPath(); X.roundRect(x,y,g.w,g.h,16); X.fill(); X.stroke(); X.setLineDash([]);
     X.fillStyle='#B3ABA3'; X.font='600 18px Outfit'; X.textAlign='center'; X.fillText(SLOTNAME[sys.s[i]]||'Part',x+g.w/2,y-14);
     if(id){ drawIcon(X,P[id][1],x+g.w/2,y+g.h/2-16,Math.min(130,g.w*.75),t); X.fillStyle='#F5F2EC'; X.font='600 15px Outfit'; wrap(P[id][0],x+g.w/2,y+g.h-26,g.w-16); } else { X.fillStyle='#4E5E80'; X.font='500 16px Outfit'; X.fillText(ST.sel?'tap to place':'empty',x+g.w/2,y+g.h/2+6); }
     if(bad){ for(let k=0;k<8;k++){ const a=t*20+k; X.strokeStyle='#FFE66B'; X.lineWidth=3; X.beginPath(); X.moveTo(x+g.w/2,y+20); X.lineTo(x+g.w/2+Math.cos(a)*40,y+20+Math.sin(a)*40); X.stroke(); } } }

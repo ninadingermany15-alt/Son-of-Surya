@@ -5,15 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Surya Games</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/fonts/fonts.css">
 <link rel="stylesheet" href="shared.css">
+<script src="sfx.js" defer></script>
 <style>
 .hero{display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:18px; padding-block:26px 10px; align-items:center}
 @media (max-width:860px){ .hero{grid-template-columns:minmax(0,1fr)} }
 .hero h1{margin:0; font:800 clamp(32px,5vw,58px)/1.02 var(--display); text-wrap:balance}
 .hero h1 em{font-style:normal; color:var(--sun)}
 .hero p{color:var(--muted); font-size:18px; max-width:56ch; margin:12px 0 0}
-.player{background:linear-gradient(160deg,#2A2522,#1E1B1A); border:1px solid var(--line); border-radius:18px; padding:18px}
+.player{background:linear-gradient(160deg,#13213A,#0B1424); border:1px solid var(--line); border-radius:18px; padding:18px}
 .player .row{display:flex; gap:12px; align-items:center}
 .big-av{width:58px; height:58px; border-radius:50%; background:var(--sun); color:var(--navy); display:grid; place-items:center; font:800 24px var(--display)}
 .player h2{margin:0; font:800 22px var(--display)}
@@ -86,9 +87,9 @@ function track(){ const R=k=>SS.records(k); const m=R('mission'), y=R('yoddha'),
 paint(); track(); SS.onChange(()=>{ paint(); track(); });
 /* animated thumbnails */
 function art(c,kind,t){ const g=c.getContext('2d'), W=800, H=450;
-  const sky=g.createLinearGradient(0,0,0,H); sky.addColorStop(0,{mission:'#79B8E5',run:'#5FA8E0',quiz:'#25211F',gadget:'#2B3F6E',build:'#081226'}[kind]); sky.addColorStop(1,{mission:'#F4E7C8',run:'#FBE3B4',quiz:'#1E1B1A',gadget:'#1E1B1A',build:'#1E1B1A'}[kind]); g.fillStyle=sky; g.fillRect(0,0,W,H);
+  const sky=g.createLinearGradient(0,0,0,H); sky.addColorStop(0,{mission:'#79B8E5',run:'#5FA8E0',quiz:'#25211F',gadget:'#2B3F6E',build:'#081226'}[kind]); sky.addColorStop(1,{mission:'#F4E7C8',run:'#FBE3B4',quiz:'#0B1424',gadget:'#0B1424',build:'#0B1424'}[kind]); g.fillStyle=sky; g.fillRect(0,0,W,H);
   if(kind==='mission'){ g.fillStyle='rgba(255,214,120,.5)'; g.beginPath(); g.arc(640,90,70,0,7); g.fill(); g.fillStyle='#FFD36B'; g.beginPath(); g.arc(640,90,34,0,7); g.fill(); g.fillStyle='#4E7D45'; g.fillRect(0,300,W,150); g.fillStyle='#E9D6B0'; g.fillRect(270,230,260,110); g.fillStyle='#B5532F'; g.beginPath(); g.moveTo(250,232); g.lineTo(400,150); g.lineTo(550,232); g.fill(); for(let i=0;i<4;i++){ g.save(); g.translate(330+i*40,190); g.transform(1,0,-.3,.55,0,0); g.fillStyle='#2A2624'; g.fillRect(0,0,36,60); g.restore(); }
-    g.fillStyle='#F4F1E8'; const vx=(t*80)%(W+200)-100; g.fillRect(vx,360,120,44); g.fillStyle='#FDA604'; g.font='700 12px Outfit'; g.fillText('SON OF SURYA',vx+10,388); g.fillStyle='#111'; g.beginPath(); g.arc(vx+24,406,10,0,7); g.arc(vx+96,406,10,0,7); g.fill(); g.fillStyle='rgba(24,21,20,.7)'; g.fillRect(20,20,300,40); g.fillStyle='#fff'; g.font='600 16px Outfit'; g.fillText('43 cases · 6 regions',34,46); }
+    g.fillStyle='#F4F1E8'; const vx=(t*80)%(W+200)-100; g.fillRect(vx,360,120,44); g.fillStyle='#FDA604'; g.font='700 12px Outfit'; g.fillText('SON OF SURYA',vx+10,388); g.fillStyle='#111'; g.beginPath(); g.arc(vx+24,406,10,0,7); g.arc(vx+96,406,10,0,7); g.fill(); g.fillStyle='rgba(9,16,30,.7)'; g.fillRect(20,20,300,40); g.fillStyle='#fff'; g.font='600 16px Outfit'; g.fillText('43 cases · 6 regions',34,46); }
   if(kind==='run'){ g.fillStyle='#C2925A'; g.fillRect(0,230,W,220); g.fillStyle='#5A5C66'; g.beginPath(); g.moveTo(330,230); g.lineTo(470,230); g.lineTo(640,H); g.lineTo(160,H); g.fill(); for(let r=0;r<5;r++) for(let s of [-1,1]){ const y=240+r*40, w=40+r*24; g.fillStyle='#1C3A78'; g.fillRect(400+s*(90+r*50)-w/2,y,w,8+r*2); }
     const bob=Math.sin(t*10)*4; g.fillStyle='#FDA604'; g.fillRect(388,330+bob,26,34); g.fillStyle='#B57B52'; g.beginPath(); g.arc(401,320+bob,10,0,7); g.fill(); g.fillStyle='#C0392B'; g.fillRect(385,332+bob,6,26); }
   if(kind==='quiz'){ g.strokeStyle='rgba(253,166,4,.3)'; for(let i=0;i<10;i++){ g.beginPath(); g.arc(400,225,40+i*28+(t*20)%28,0,7); g.stroke(); } g.fillStyle='#0A1530'; g.strokeStyle='#3D3632'; g.lineWidth=3; [[120,280],[420,280],[120,350],[420,350]].forEach(([x,y],i)=>{ g.beginPath(); g.roundRect(x,y,260,50,25); g.fill(); g.stroke(); g.fillStyle='#FDA604'; g.font='700 18px Outfit'; g.fillText('ABCD'[i],x+20,y+32); g.fillStyle='#0A1530'; }); g.fillStyle='#fff'; g.font='700 26px Outfit'; g.fillText('Kaun Banega Solar Hero',230,140); }

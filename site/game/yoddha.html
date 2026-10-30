@@ -5,13 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Suryaputra Yoddha · Son of Surya Games</title>
 <meta name="description" content="20 solar missions in 3D, from a 10 W garden light to a 2 GW solar park. Collect the right parts and papers, finish the project and earn your Suryaputra Yoddha certificate.">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/fonts/fonts.css">
 <link rel="stylesheet" href="shared.css">
+<script src="sfx.js" defer></script>
 <style>
-:root{ --night:#131111; --navy:#1E1B1A; --sun:#D77804; --ray:#DB7706; --ink:#F5F2EC; --muted:#B3ABA3; --panel:#24201E; --line:#3A3431; --good:#10B981; --bad:#FF6B6B; --gold:#FFD36B;
+:root{ --night:#060C18; --navy:#0B1424; --sun:#FFCF4D; --ray:#FFCF4D; --ink:#F5F2EC; --muted:#B3ABA3; --panel:#0F1A2E; --line:#22324D; --good:#10B981; --bad:#FF6B6B; --gold:#FFD36B;
   --display:'Outfit', system-ui, sans-serif; --body:'DM Sans', system-ui, sans-serif; color-scheme:dark }
 *{box-sizing:border-box}
-body{margin:0; background:radial-gradient(ellipse at top, #2A2522, var(--night) 60%); color:var(--ink); font-family:var(--body)}
+body{margin:0; background:radial-gradient(ellipse at top, #13213A, var(--night) 60%); color:var(--ink); font-family:var(--body)}
 .wrap{max-width:1180px; margin:0 auto; padding:14px max(12px, env(safe-area-inset-right,0px)) 30px max(12px, env(safe-area-inset-left,0px))}
 .top{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:10px}
 .top h1{font:800 22px var(--display); margin:0 auto 0 0} .top h1 b{color:var(--sun)}
@@ -20,15 +21,15 @@ body{margin:0; background:radial-gradient(ellipse at top, #2A2522, var(--night) 
 .stage{position:relative; aspect-ratio:16/9; border-radius:18px; overflow:hidden; background:#000; box-shadow:0 30px 60px -30px #000; touch-action:none}
 .stage canvas{position:absolute; inset:0; width:100%!important; height:100%!important; display:block}
 .hud{position:absolute; top:10px; left:12px; right:12px; display:flex; gap:8px; justify-content:space-between; z-index:3; pointer-events:none; flex-wrap:wrap}
-.chip{font:600 13px var(--display); background:rgba(24,21,20,.75); border:1px solid rgba(255,255,255,.14); padding:6px 12px; border-radius:999px; color:#fff}
+.chip{font:600 13px var(--display); background:rgba(9,16,30,.75); border:1px solid rgba(255,255,255,.14); padding:6px 12px; border-radius:999px; color:#fff}
 .chip b{color:var(--gold)}
 .list{position:absolute; left:12px; bottom:12px; z-index:3; display:flex; flex-direction:column; gap:4px; pointer-events:none; max-width:46%}
-.list span{font:600 12px var(--display); background:rgba(24,21,20,.78); border:1px solid rgba(255,255,255,.14); border-radius:10px; padding:4px 9px; color:#fff}
+.list span{font:600 12px var(--display); background:rgba(9,16,30,.78); border:1px solid rgba(255,255,255,.14); border-radius:10px; padding:4px 9px; color:#fff}
 .list span.done{background:rgba(16,185,129,.35); border-color:var(--good)}
 .list span i{font-style:normal; color:var(--gold)}
 .screen{position:absolute; inset:0; display:grid; place-items:center; z-index:5; background:radial-gradient(ellipse at 50% 30%, rgba(253,166,4,.18), transparent 55%), rgba(10,9,9,.66); padding:14px; overflow:auto}
 .screen[hidden]{display:none}
-.card{background:rgba(30,27,26,.95); border:1px solid var(--line); border-radius:18px; padding:20px; max-width:640px; width:100%; text-align:center}
+.card{background:rgba(11,20,36,.95); border:1px solid var(--line); border-radius:18px; padding:20px; max-width:640px; width:100%; text-align:center}
 .card h2{font:800 clamp(22px,3.6vw,38px)/1.05 var(--display); margin:0} .card h2 em{font-style:normal; color:var(--sun)}
 .card p{color:var(--muted); margin:10px 0 0}
 .eyebrow{font:600 12px var(--display); letter-spacing:.14em; text-transform:uppercase; color:var(--sun)}
@@ -42,12 +43,12 @@ body{margin:0; background:radial-gradient(ellipse at top, #2A2522, var(--night) 
 .map{display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-top:14px}
 @media (max-width:700px){ .map{grid-template-columns:repeat(4,1fr)} }
 @media (max-width:480px){ .map{grid-template-columns:repeat(3,1fr)} }
-.lv{all:unset; cursor:pointer; position:relative; border-radius:14px; padding:10px; background:linear-gradient(160deg,#2C2724,#1E1B1A); border:1px solid var(--line); text-align:left; min-height:92px; display:flex; flex-direction:column; gap:3px}
+.lv{all:unset; cursor:pointer; position:relative; border-radius:14px; padding:10px; background:linear-gradient(160deg,#2C2724,#0B1424); border:1px solid var(--line); text-align:left; min-height:92px; display:flex; flex-direction:column; gap:3px}
 .lv{text-shadow:0 1px 3px rgba(0,0,0,.85)} .lv b{font:800 20px var(--display); color:#FFD36B} .lv span{font:700 13px var(--display)} .lv small{font-size:11px; color:#F5F2EC} .lv em{font-style:normal; color:var(--gold); font-size:13px}
 .lv[aria-disabled="true"]{opacity:.45; cursor:not-allowed}
 .lv .sz{position:absolute; right:8px; top:8px; font:700 10px var(--display); background:rgba(215,120,4,.18); color:var(--gold); padding:2px 6px; border-radius:999px}
 /* flyer */
-.flyer{position:relative; overflow:hidden; background:linear-gradient(160deg,#2E2620,#1E1B1A); border:2px solid var(--gold)}
+.flyer{position:relative; overflow:hidden; background:linear-gradient(160deg,#2E2620,#0B1424); border:2px solid var(--gold)}
 .flyer:before{content:''; position:absolute; inset:-40%; background:conic-gradient(from 0deg, rgba(255,211,107,.0), rgba(255,211,107,.14), rgba(255,211,107,0) 20%, rgba(255,211,107,.14) 40%, rgba(255,211,107,0) 60%, rgba(255,211,107,.14) 80%, rgba(255,211,107,0)); animation:spin 14s linear infinite; z-index:0}
 .flyer>*{position:relative; z-index:1}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -60,7 +61,7 @@ body{margin:0; background:radial-gradient(ellipse at top, #2A2522, var(--night) 
 @keyframes fall{to{transform:translateY(120vh) rotate(720deg)}}
 .namefield{display:grid; gap:4px; margin-top:12px; text-align:left; font:600 13px var(--display)} .namefield input{font:16px var(--body); padding:10px 12px; border-radius:10px; border:1.5px solid var(--line); background:var(--panel); color:#fff}
 .small{font-size:12px; color:var(--muted)}
-.toastx{position:absolute; left:50%; top:56px; transform:translateX(-50%); z-index:4; background:rgba(24,21,20,.9); border:1px solid var(--bad); color:#fff; border-radius:12px; padding:8px 14px; font:600 14px var(--display); max-width:80%; text-align:center; pointer-events:none; opacity:0; transition:opacity .2s}
+.toastx{position:absolute; left:50%; top:56px; transform:translateX(-50%); z-index:4; background:rgba(9,16,30,.9); border:1px solid var(--bad); color:#fff; border-radius:12px; padding:8px 14px; font:600 14px var(--display); max-width:80%; text-align:center; pointer-events:none; opacity:0; transition:opacity .2s}
 .toastx.show{opacity:1} .toastx.good{border-color:var(--good)}
 @media (max-width:700px){ .stage{aspect-ratio:4/5} .screen{position:fixed; z-index:60; padding:10px; background:rgba(10,9,9,.92)} }
 @media (max-width:640px){ .screen{padding:8px} .card{padding:12px} .need{grid-template-columns:1fr 1fr} .need small{display:none} .list{max-width:60%} .list span{font-size:10px; padding:2px 6px} .chip{font-size:11px; padding:4px 8px} .card p{font-size:13px} }
@@ -241,11 +242,11 @@ function buildScene(L){ decor.forEach(d=>scene.remove(d)); decor=[]; if(landmark
   lineMat.color.set(tm==='night'?'#FFE9A8':'#F2D46B'); setWeather(lk.weather); }
 /* player */
 const P=new T.Group();
-const skin=C('#B57B52'), shirt=C('#1E1B1A'), vest=C('#FDA604'), pants=C('#2B3A55'), cape=new T.MeshLambertMaterial({color:'#D77804', side:T.DoubleSide});
+const skin=C('#B57B52'), shirt=C('#0B1424'), vest=C('#FDA604'), pants=C('#2B3A55'), cape=new T.MeshLambertMaterial({color:'#FFCF4D', side:T.DoubleSide});
 const torso=new T.Mesh(new T.BoxGeometry(.9,1.1,.5),vest); torso.position.y=1.75; torso.castShadow=true; P.add(torso);
 const head=new T.Mesh(new T.SphereGeometry(.36,16,12),skin); head.position.y=2.65; P.add(head);
 const helmet=new T.Mesh(new T.SphereGeometry(.42,16,10,0,Math.PI*2,0,Math.PI/2),C('#FFFFFF')); helmet.position.y=2.72; P.add(helmet);
-const sunBadge=new T.Mesh(new T.CircleGeometry(.18,16), new T.MeshBasicMaterial({color:'#1E1B1A'})); sunBadge.position.set(0,1.85,.26); P.add(sunBadge);
+const sunBadge=new T.Mesh(new T.CircleGeometry(.18,16), new T.MeshBasicMaterial({color:'#0B1424'})); sunBadge.position.set(0,1.85,.26); P.add(sunBadge);
 const legL=new T.Mesh(new T.BoxGeometry(.32,1,.34),pants), legR=legL.clone(); legL.position.set(-.22,.7,0); legR.position.set(.22,.7,0); P.add(legL,legR);
 const armL=new T.Mesh(new T.BoxGeometry(.24,.95,.26),shirt), armR=armL.clone(); armL.position.set(-.6,1.8,0); armR.position.set(.6,1.8,0); P.add(armL,armR);
 const capeM=new T.Mesh(new T.PlaneGeometry(.9,1.4,1,6),cape); capeM.position.set(0,1.55,-.3); P.add(capeM);
@@ -274,8 +275,8 @@ function obstacle(kind){ const g=new T.Group(); g.userData.kind=kind;
   if(kind==='tape'){ for(const x of [-.9,.9]){ const p=new T.Mesh(new T.BoxGeometry(.15,1,.15),IM.white); p.position.set(x,.5,0); g.add(p);} for(let i=0;i<5;i++){ const s=new T.Mesh(new T.BoxGeometry(.38,.25,.12), i%2?IM.white:IM.tape); s.position.set(-.8+i*.4,.85,0); g.add(s);} const l=label('FILE PENDING','#FFFFFF','#E0362E',1.6); l.position.set(0,1.45,0); g.add(l); g.userData.need='jump'; }
   if(kind==='storm'){ for(let i=0;i<4;i++){ const s=new T.Mesh(new T.SphereGeometry(.6+Math.random()*.3,12,10),IM.cloud); s.position.set(-.8+i*.55,2.6+Math.random()*.2,0); g.add(s);} const bolt=new T.Mesh(new T.BoxGeometry(.12,1.1,.05),IM.bolt); bolt.position.set(0,1.8,0); bolt.rotation.z=.4; g.add(bolt); g.userData.bolt=bolt; g.userData.need='slide'; }
   scene.add(g); return g; }
-function item(spec,good){ const g=itemMesh(spec[1]); g.userData.item={label:spec[0],kind:spec[1],good,why:good?spec[3]:spec[2]}; const l=label(spec[0],'rgba(255,255,255,.92)','#1E1B1A'); l.position.y=1.05; g.add(l); g.position.y=1.15; scene.add(g); return g; }
-const finish=new T.Group(); { for(const x of [-4.2,4.2]){ const p=new T.Mesh(new T.CylinderGeometry(.22,.22,6,10),C('#FDA604')); p.position.set(x,3,0); finish.add(p);} const b=new T.Mesh(new T.BoxGeometry(8.8,1.3,.2),C('#1E1B1A')); b.position.y=5.6; finish.add(b); finish.visible=false; scene.add(finish); }
+function item(spec,good){ const g=itemMesh(spec[1]); g.userData.item={label:spec[0],kind:spec[1],good,why:good?spec[3]:spec[2]}; const l=label(spec[0],'rgba(255,255,255,.92)','#0B1424'); l.position.y=1.05; g.add(l); g.position.y=1.15; scene.add(g); return g; }
+const finish=new T.Group(); { for(const x of [-4.2,4.2]){ const p=new T.Mesh(new T.CylinderGeometry(.22,.22,6,10),C('#FDA604')); p.position.set(x,3,0); finish.add(p);} const b=new T.Mesh(new T.BoxGeometry(8.8,1.3,.2),C('#0B1424')); b.position.y=5.6; finish.add(b); finish.visible=false; scene.add(finish); }
 let finishLabel=null;
 /* ===================== GAME STATE ===================== */
 const st={ run:false, L:null, z:0, speed:14, lane:1, x:0, y:0, vy:0, slide:0, dist:0, target:600, score:0, lives:3, inv:0, mistakes:0, hits:0, got:{}, spawnZ:-30, t:0, finishSpawned:false };
@@ -285,7 +286,7 @@ function paintList(){ $('list').innerHTML=st.L.need.map(n=>{ const g=Math.min(n[
 function paintHud(){ $('hDist').textContent=Math.floor(st.dist)+' / '+st.target+' m'; $('hScore').textContent=st.score; $('hLife').textContent='❤'.repeat(st.lives)+'♡'.repeat(Math.max(0,3-st.lives)); }
 function reset(L){ objs.forEach(o=>scene.remove(o)); objs=[]; st.L=L; buildScene(L);
   Object.assign(st,{run:true,z:0,speed:13+L.n*.45,lane:1,x:0,y:0,vy:0,slide:0,dist:0,target:520+L.n*35,score:0,lives:3,inv:0,mistakes:0,hits:0,got:{},spawnZ:-30,finishSpawned:false});
-  finish.visible=false; if(finishLabel){ finish.remove(finishLabel); } finishLabel=label('FINISH · '+L.name.toUpperCase(),'#1E1B1A','#FFD36B',8); finishLabel.position.set(0,5.6,.2); finish.add(finishLabel);
+  finish.visible=false; if(finishLabel){ finish.remove(finishLabel); } finishLabel=label('FINISH · '+L.name.toUpperCase(),'#0B1424','#FFD36B',8); finishLabel.position.set(0,5.6,.2); finish.add(finishLabel);
   $('hLv').textContent='Mission '+L.n+' · '+L.size; paintList(); paintHud(); music(); }
 function spawn(){ const z=st.spawnZ, L=st.L; const left=Math.max(1,(st.target-st.dist-Math.abs(z))/20); const rem=remaining();
   const lanes=[0,1,2].sort(()=>Math.random()-.5);
@@ -318,7 +319,7 @@ function brief(L){ $('sMap').hidden=true; $('sBrief').hidden=false; $('bEye').te
   $('bGo').onclick=()=>{ ac(); $('sBrief').hidden=true; reset(L); speak('Mission '+L.n+'. '+L.name+'. '+L.story); }; $('bBack').onclick=showMap; }
 function hit(){ if(st.inv>0) return; st.lives--; st.hits++; st.inv=1.4; fx.hit(); paintHud(); if(st.lives<=0) fail('Out of lives','Too many obstacles. Fake vendors, red tape and storms stop the job. Try again and plan your lane early.'); else toast('Ouch! '+st.lives+' '+(st.lives===1?'life':'lives')+' left'); }
 function fail(t,msg){ st.run=false; fx.lose(); $('fTitle').textContent=t; $('fText').textContent=msg; $('sFail').hidden=false; $('fRetry').onclick=()=>{ $('sFail').hidden=true; reset(st.L); }; $('fMap').onclick=showMap; speak(t+'. '+msg); }
-function confetti(){ const box=document.createElement('div'); box.className='confetti'; const cols=['#FFD36B','#D77804','#10B981','#5AA7FF','#FF6B6B','#FFFFFF']; for(let i=0;i<90;i++){ const c=document.createElement('i'); c.style.left=Math.random()*100+'%'; c.style.background=cols[i%cols.length]; c.style.animationDuration=(1.8+Math.random()*2.2)+'s'; c.style.animationDelay=(Math.random()*.8)+'s'; box.appendChild(c);} stage.appendChild(box); setTimeout(()=>box.remove(),5200); }
+function confetti(){ const box=document.createElement('div'); box.className='confetti'; const cols=['#FFD36B','#FFCF4D','#10B981','#5AA7FF','#FF6B6B','#FFFFFF']; for(let i=0;i<90;i++){ const c=document.createElement('i'); c.style.left=Math.random()*100+'%'; c.style.background=cols[i%cols.length]; c.style.animationDuration=(1.8+Math.random()*2.2)+'s'; c.style.animationDelay=(Math.random()*.8)+'s'; box.appendChild(c);} stage.appendChild(box); setTimeout(()=>box.remove(),5200); }
 function complete(){ st.run=false; const L=st.L; const miss=st.L.need.filter(n=>(st.got[n[0]]||0)<n[2]);
   if(miss.length){ fail('Project not complete','You reached the site without: '+miss.map(n=>n[0]).join(', ')+'. A real job cannot be handed over with missing parts or papers.'); return; }
   const stars= st.mistakes===0&&st.hits===0?3 : st.mistakes<=1&&st.hits<=1?2 : 1;
@@ -339,20 +340,20 @@ function complete(){ st.run=false; const L=st.L; const miss=st.L.need.filter(n=>
 function loadImg(src){ return new Promise(r=>{ const i=new Image(); i.onload=()=>r(i); i.onerror=()=>r(null); i.src=src; }); }
 async function drawCert(name){ const W=2339,H=1654, c=document.createElement('canvas'); c.width=W; c.height=H; const g=c.getContext('2d');
   g.fillStyle='#FCFCF8'; g.fillRect(0,0,W,H); const grd=g.createRadialGradient(W/2,H*.45,100,W/2,H*.45,W*.7); grd.addColorStop(0,'rgba(219,119,6,.10)'); grd.addColorStop(1,'rgba(219,119,6,0)'); g.fillStyle=grd; g.fillRect(0,0,W,H);
-  g.strokeStyle='#D77804'; g.lineWidth=18; g.strokeRect(60,60,W-120,H-120); g.strokeStyle='#166434'; g.lineWidth=4; g.strokeRect(100,100,W-200,H-200);
+  g.strokeStyle='#FFCF4D'; g.lineWidth=18; g.strokeRect(60,60,W-120,H-120); g.strokeStyle='#166434'; g.lineWidth=4; g.strokeRect(100,100,W-200,H-200);
   const sun=await loadImg('/assets/brand/sun-mark-transparent.png'); if(sun){ g.globalAlpha=.08; g.drawImage(sun,W/2-420,H/2-460,840,945); g.globalAlpha=1; }
   const logo=await loadImg('/assets/brand/logo-horizontal-transparent-dark-text.png'); if(logo) g.drawImage(logo,W/2-300,150,600,158);
   g.textAlign='center'; g.fillStyle='#166434'; g.font='600 46px Outfit, sans-serif'; g.fillText('CERTIFICATE OF ACHIEVEMENT',W/2,410);
-  g.fillStyle='#1E1B1A'; g.font='800 128px Outfit, sans-serif'; g.fillText('Suryaputra Yoddha',W/2,560);
+  g.fillStyle='#0B1424'; g.font='800 128px Outfit, sans-serif'; g.fillText('Suryaputra Yoddha',W/2,560);
   g.fillStyle='#5D6676'; g.font='400 44px "DM Sans", sans-serif'; g.fillText('This certifies that',W/2,680);
-  g.fillStyle='#D77804'; g.font='800 104px Outfit, sans-serif'; g.fillText(name,W/2,810); g.fillStyle='#D77804'; g.fillRect(W/2-520,840,1040,5);
-  g.fillStyle='#1E1B1A'; g.font='400 44px "DM Sans", sans-serif';
+  g.fillStyle='#FFCF4D'; g.font='800 104px Outfit, sans-serif'; g.fillText(name,W/2,810); g.fillStyle='#FFCF4D'; g.fillRect(W/2-520,840,1040,5);
+  g.fillStyle='#0B1424'; g.font='400 44px "DM Sans", sans-serif';
   ['completed all 20 solar missions of Suryaputra Yoddha, from a 10 W garden light','to a 2 GW solar park, choosing the right parts, papers and safety gear for each job.'].forEach((l,i)=>g.fillText(l,W/2,940+i*64));
   const r=recs(); const stars=LV.reduce((a,L)=>a+((r['L'+L.n]||{}).stars||0),0), cells=LV.reduce((a,L)=>a+((r['L'+L.n]||{}).score||0),0);
   g.font='700 40px Outfit, sans-serif'; g.fillStyle='#166434'; g.fillText('★ '+stars+' / 60 stars     ·     '+cells.toLocaleString('en-IN')+' Solar Cells     ·     Level '+SS.level(),W/2,1130);
   const date=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}); const id='SY-'+(Date.now().toString(36)).toUpperCase();
   g.font='400 34px "DM Sans", sans-serif'; g.fillStyle='#5D6676'; g.fillText('Awarded on '+date+'  ·  Certificate ID '+id,W/2,1240);
-  g.textAlign='left'; g.font='700 36px Outfit, sans-serif'; g.fillStyle='#1E1B1A'; g.fillText('Son of Surya Games',220,1420); g.font='400 30px "DM Sans", sans-serif'; g.fillStyle='#5D6676'; g.fillText('sonofsurya.com/game',220,1466);
+  g.textAlign='left'; g.font='700 36px Outfit, sans-serif'; g.fillStyle='#0B1424'; g.fillText('Son of Surya Games',220,1420); g.font='400 30px "DM Sans", sans-serif'; g.fillStyle='#5D6676'; g.fillText('sonofsurya.com/game',220,1466);
   g.textAlign='right'; g.font='400 26px "DM Sans", sans-serif'; g.fillText('A learning achievement, not a professional qualification.',W-220,1466);
   return {c,id}; }
 function pdfFromJpeg(dataURL,w,h){ const bin=atob(dataURL.split(',')[1]); const img=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) img[i]=bin.charCodeAt(i);

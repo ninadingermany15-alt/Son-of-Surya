@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kaun Banega Solar Hero · Son of Surya Games</title>
 <meta name="description" content="A solar quiz show with a host, a hot seat, a live audience, lifelines and a 15-step prize ladder. New questions every game.">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/fonts/fonts.css">
 <link rel="stylesheet" href="shared.css">
+<script src="sfx.js" defer></script>
 <style>
-:root{ --night:#0B0A12; --navy:#1E1B1A; --sun:#D77804; --gold:#FFD36B; --ink:#F5F2EC; --muted:#B9B2C8; --line:#3B3550; --good:#10B981; --bad:#FF6B6B; --bar:#120F2A;
+:root{ --night:#0B0A12; --navy:#0B1424; --sun:#FFCF4D; --gold:#FFD36B; --ink:#F5F2EC; --muted:#B9B2C8; --line:#3B3550; --good:#10B981; --bad:#FF6B6B; --bar:#120F2A;
   --display:'Outfit', system-ui, sans-serif; --body:'DM Sans', system-ui, sans-serif; color-scheme:dark }
 *{box-sizing:border-box}
 body{margin:0; background:radial-gradient(ellipse at top, #241B3A, var(--night) 65%); color:var(--ink); font-family:var(--body)}
@@ -26,7 +27,7 @@ body{margin:0; background:radial-gradient(ellipse at top, #241B3A, var(--night) 
 .card{background:rgba(22,18,40,.94); border:1px solid var(--line); border-radius:18px; padding:20px; max-width:560px; width:100%; text-align:center}
 .card h2{font:800 clamp(22px,3.6vw,36px)/1.05 var(--display); margin:0} .card h2 em{font-style:normal; color:var(--gold)}
 .card p{color:var(--muted); margin:10px 0 0}
-.btn{font:700 15px var(--display); border:0; border-radius:12px; padding:12px 20px; cursor:pointer; background:var(--gold); color:#1E1B1A; margin:14px 4px 0}
+.btn{font:700 15px var(--display); border:0; border-radius:12px; padding:12px 20px; cursor:pointer; background:var(--gold); color:#0B1424; margin:14px 4px 0}
 .btn.alt{background:rgba(255,255,255,.1); color:#fff; border:1px solid rgba(255,255,255,.2)}
 .namefield{display:grid; gap:4px; margin-top:12px; text-align:left; font:600 13px var(--display)} .namefield input{font:16px var(--body); padding:10px 12px; border-radius:10px; border:1.5px solid var(--line); background:#1D1830; color:#fff}
 /* question and answer bars */
@@ -52,7 +53,7 @@ body{margin:0; background:radial-gradient(ellipse at top, #241B3A, var(--night) 
 .explain{margin-top:12px; color:var(--muted); font-size:15px; min-height:24px; text-align:center}
 .ladder{background:linear-gradient(180deg,#1B1640,#0E0B24); border:1px solid var(--line); border-radius:18px; padding:10px; display:flex; flex-direction:column-reverse; gap:3px; font:600 14px var(--display); font-variant-numeric:tabular-nums; align-self:start}
 .ladder div{padding:5px 10px; border-radius:8px; display:flex; justify-content:space-between; color:var(--muted)}
-.ladder div.safe{color:#fff} .ladder div.on{background:var(--gold); color:#1E1B1A} .ladder div.won{color:var(--good)}
+.ladder div.safe{color:#fff} .ladder div.on{background:var(--gold); color:#0B1424} .ladder div.won{color:var(--good)}
 .small{font-size:12px; color:var(--muted)}
 @media (prefers-reduced-motion: reduce){ *{transition:none!important} }
 </style>
@@ -176,9 +177,9 @@ function draw(now){ const t=(now-t0)/1000; X.clearRect(0,0,W,H);
   // hot seats: contestant (left), host (right)
   chair(W/2-210,560,false); chair(W/2+210,560,true);
   const hostTalk=talking?Math.abs(Math.sin(t*16))*.9:0;
-  person(W/2+210,470,1.05,{suit:'#1C1C24',shirt:'#F4F1E8',tie:'#D77804',skin:'#C68A5E',hair:'#ECECEC',beard:true,glasses:true,mouth:hostTalk,armL:.25+(talking?Math.sin(t*3)*.25:0),armR:-.15});
+  person(W/2+210,470,1.05,{suit:'#1C1C24',shirt:'#F4F1E8',tie:'#FFCF4D',skin:'#C68A5E',hair:'#ECECEC',beard:true,glasses:true,mouth:hostTalk,armL:.25+(talking?Math.sin(t*3)*.25:0),armR:-.15});
   const pc=mood==='happy'?.9:mood==='tense'?.05:.2;
-  person(W/2-210,470,1.0,{suit:'#D77804',shirt:'#1E1B1A',skin:'#B57B52',hair:'#1a1a1a',mouth:mood==='happy'?.8:0,armL:mood==='happy'?-2.4+Math.sin(t*10)*.2:.15,armR:mood==='happy'?2.4-Math.sin(t*10)*.2:mood==='tense'?-.9:-.15});
+  person(W/2-210,470,1.0,{suit:'#FFCF4D',shirt:'#0B1424',skin:'#B57B52',hair:'#1a1a1a',mouth:mood==='happy'?.8:0,armL:mood==='happy'?-2.4+Math.sin(t*10)*.2:.15,armR:mood==='happy'?2.4-Math.sin(t*10)*.2:mood==='tense'?-.9:-.15});
   [[playerName,W/2-210],[tr().host,W/2+210]].forEach(([n,x])=>{ X.font='700 22px Outfit, sans-serif'; const w=X.measureText(n).width+28; X.fillStyle='rgba(10,8,26,.85)'; rr(x-w/2,250,w,34,17); X.fill(); X.strokeStyle='#FFD36B'; X.lineWidth=2; rr(x-w/2,250,w,34,17); X.stroke(); X.fillStyle='#FFD36B'; X.fillText(n,x,274); });
   // host console
   X.fillStyle='#1B1640'; rr(W/2-60,500,120,60,10); X.fill(); X.fillStyle='rgba(255,211,107,'+(.5+.3*Math.sin(t*3))+')'; X.fillRect(W/2-46,512,92,8);

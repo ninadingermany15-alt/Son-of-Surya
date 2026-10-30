@@ -5,8 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Surya Mission</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=Special+Elite&display=swap">
+<link rel="stylesheet" href="/fonts/fonts.css">
 <link rel="stylesheet" href="shared.css">
+<script src="sfx.js" defer></script>
 <style>
 .app{display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:12px; padding-block:12px}
 @media (max-width:920px){ .app{grid-template-columns:minmax(0,1fr)} }
@@ -21,8 +22,8 @@ canvas#scene{position:absolute; inset:0; width:100%; height:100%; display:block}
 .overlay{position:absolute; left:0; right:0; bottom:0; z-index:6; padding:12px; pointer-events:none}
 .overlay > *{pointer-events:auto}
 .overlay.top{top:52px; bottom:auto}
-.dlg{background:linear-gradient(180deg, rgba(24,21,20,0), rgba(24,21,20,.9) 30%); padding:28px 16px 12px; display:flex; gap:14px; align-items:flex-end}
-.overlay.top .dlg{background:rgba(24,21,20,.9); border-radius:14px; padding:10px 14px}
+.dlg{background:linear-gradient(180deg, rgba(9,16,30,0), rgba(9,16,30,.9) 30%); padding:28px 16px 12px; display:flex; gap:14px; align-items:flex-end}
+.overlay.top .dlg{background:rgba(9,16,30,.9); border-radius:14px; padding:10px 14px}
 .face{flex:0 0 auto; width:84px; height:84px; border-radius:14px; background:var(--panel); border:2px solid var(--sun); overflow:hidden}
 .face canvas{width:100%; height:100%; display:block}
 .overlay.top .face{width:48px; height:48px}
@@ -31,7 +32,7 @@ canvas#scene{position:absolute; inset:0; width:100%; height:100%; display:block}
 .say{font-size:17px; line-height:1.5; margin-top:2px; min-height:52px}
 .overlay.top .say{min-height:0; font-size:15px}
 .choices{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
-.puz{background:rgba(24,21,20,.93); border:1px solid var(--line); border-radius:14px; padding:14px; display:grid; gap:10px}
+.puz{background:rgba(9,16,30,.93); border:1px solid var(--line); border-radius:14px; padding:14px; display:grid; gap:10px}
 .puz h3{margin:0; font:700 16px var(--display); color:var(--sun)}
 .puz .q{font-size:15px}
 .opts{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:8px}
@@ -43,7 +44,7 @@ canvas#scene{position:absolute; inset:0; width:100%; height:100%; display:block}
 /* picker */
 .screen{position:absolute; inset:0; z-index:9; display:grid; place-items:center; padding:12px; background:radial-gradient(ellipse at 70% 15%, rgba(253,166,4,.2), transparent 60%), rgba(10,9,9,.62)}
 .screen[hidden]{display:none}
-.pick{background:rgba(30,27,26,.94); border:1px solid var(--line); border-radius:18px; padding:18px; width:100%; max-width:880px; max-height:100%; overflow:auto}
+.pick{background:rgba(11,20,36,.94); border:1px solid var(--line); border-radius:18px; padding:18px; width:100%; max-width:880px; max-height:100%; overflow:auto}
 .pick h1{font:800 clamp(24px,3.6vw,40px)/1.05 var(--display); margin:0}
 .pick h1 em{font-style:normal; color:var(--sun)}
 .eyebrow{font:600 12px var(--display); letter-spacing:.14em; text-transform:uppercase; color:var(--sun)}
@@ -234,7 +235,7 @@ function person(x,y,s,o={}){ X.save(); X.translate(x,y); X.scale(s,s);
   if(o.hat){ X.fillStyle=o.hat; X.beginPath(); X.ellipse(0,-104,17,5,0,0,7); X.fill(); X.beginPath(); X.arc(0,-106,12,Math.PI,0); X.fill(); }
   X.restore(); }
 function portrait(canvas,o){ const d=2,s=84; canvas.width=s*d; canvas.height=s*d; const c=canvas.getContext('2d'); c.scale(d,d);
-  const g=c.createLinearGradient(0,0,0,s); g.addColorStop(0,'#1C2E52'); g.addColorStop(1,'#1E1B1A'); c.fillStyle=g; c.fillRect(0,0,s,s);
+  const g=c.createLinearGradient(0,0,0,s); g.addColorStop(0,'#1C2E52'); g.addColorStop(1,'#0B1424'); c.fillStyle=g; c.fillRect(0,0,s,s);
   c.fillStyle=o.saree||(o.ghutra?'#FAFAFA':o.shirt)||'#E8E0CC'; c.beginPath(); c.ellipse(42,92,32,26,0,0,7); c.fill();
   if(o.vest){ c.fillStyle='#FF8A1A'; c.beginPath(); c.ellipse(42,92,32,26,0,0,7); c.fill(); c.fillStyle='#E8F04A'; c.fillRect(14,76,56,4); }
   if(o.hijab){ c.fillStyle=o.hijab; c.beginPath(); c.ellipse(42,46,24,30,0,0,7); c.fill(); }
@@ -277,11 +278,11 @@ const scenes={
    [[690,110,c.route.from],[600,330,c.route.mid],[470,600,c.route.to]].forEach(p=>{ X.fillStyle='#FDA604'; X.beginPath(); X.arc(p[0],p[1],10,0,7); X.fill(); X.fillStyle='#fff'; X.font='600 18px Outfit'; X.fillText(p[2],p[0]+16,p[1]+6); });
    const k=Math.min(1,S.mapT), seg=k*(route.length-1), i=Math.min(route.length-2,Math.floor(seg)), f=seg-i, vx=lerp(route[i][0],route[i+1][0],f), vy=lerp(route[i][1],route[i+1][1],f);
    X.save(); X.translate(vx,vy); X.fillStyle='#fff'; X.fillRect(-22,-12,44,22); X.fillStyle='#FDA604'; X.fillRect(-22,-4,44,5); X.fillStyle='#111'; X.beginPath(); X.arc(-12,12,5,0,7); X.arc(12,12,5,0,7); X.fill(); X.restore();
-   X.fillStyle='rgba(24,21,20,.75)'; X.fillRect(20,H-150,520,46); X.fillStyle='#fff'; X.font='500 17px Outfit'; X.fillText(c.route.from+' → '+c.route.to+' · '+c.route.km+' km',34,H-120); },
+   X.fillStyle='rgba(9,16,30,.75)'; X.fillRect(20,H-150,520,46); X.fillStyle='#fff'; X.font='500 17px Outfit'; X.fillText(c.route.from+' → '+c.route.to+' · '+c.route.km+' km',34,H-120); },
  road(t){ const th=S.case.theme; backdrop(th,t*30); X.fillStyle='#3A3A3F'; X.fillRect(0,520,W,110); X.fillStyle='#F2D46B'; for(let i=0;i<14;i++){ const x=((i*120-t*380)%(W+120)+W+120)%(W+120)-60; X.fillRect(x,572,60,6); }
    X.fillStyle='#7A5A3A'; X.fillRect(0,630,W,90);
    for(let i=0;i<5;i++){ const x=((i*300-t*160)%(W+300)+W+300)%(W+300)-150; if(th.far==='palms') palm(x,520,.8,Math.sin(t+i)*.3); else tree(x,520,.55,th.far==='alps'?'pine':th.far==='savanna'?'acacia':th.far==='snowpeaks'?'poplar':th.far==='dunes'?'khejri':'mango'); }
-   const bob=Math.sin(t*14)*2; X.save(); X.translate(520,560+bob); X.fillStyle='#F4F1E8'; X.fillRect(0,-70,190,70); X.fillStyle='#1E1B1A'; X.fillRect(8,-66,174,10); X.fillStyle='#FDA604'; X.font='700 20px Outfit'; X.fillText('SON OF SURYA',20,-24);
+   const bob=Math.sin(t*14)*2; X.save(); X.translate(520,560+bob); X.fillStyle='#F4F1E8'; X.fillRect(0,-70,190,70); X.fillStyle='#0B1424'; X.fillRect(8,-66,174,10); X.fillStyle='#FDA604'; X.font='700 20px Outfit'; X.fillText('SON OF SURYA',20,-24);
    X.fillStyle='#2F5D9E'; X.beginPath(); X.moveTo(190,0); X.lineTo(190,-60); X.lineTo(240,-60); X.lineTo(262,-28); X.lineTo(262,0); X.fill(); X.fillStyle='#A8D4F0'; X.fillRect(200,-54,34,22);
    X.fillStyle='#111'; [40,150,225].forEach(x=>{ X.beginPath(); X.arc(x,6,16,0,7); X.fill(); }); X.restore(); },
  site(t){ const c=S.case, th=c.theme; backdrop(th,t); building(th.bldg,430,400,380,190); obstruction(th.obst);
@@ -290,7 +291,7 @@ const scenes={
    person(700,640,1.15,{...c.cast.client,wave:true}); person(620,646,1.05,c.cast.family); person(240,660,1.1,youLook());
    if(S.scene!=='site') return;
    CLUEKEYS.forEach(k=>{ const h=sitePos(k), got=S.clues.has(k), lab=c.clues[k][0]; X.strokeStyle=got?'rgba(16,185,129,.9)':'rgba(253,166,4,'+(.5+.5*Math.sin(t*4))+')'; X.lineWidth=3; X.beginPath(); X.arc(h.x,h.y,h.r,0,7); X.stroke();
-     X.font='600 13px Outfit'; const tw=X.measureText((got?'✓ ':'')+lab).width+20; X.fillStyle=got?'rgba(16,185,129,.9)':'rgba(30,27,26,.85)'; X.beginPath(); X.roundRect(h.x-tw/2,h.y-h.r-30,tw,22,8); X.fill(); X.fillStyle='#fff'; X.textAlign='center'; X.fillText((got?'✓ ':'')+lab,h.x,h.y-h.r-14); X.textAlign='left'; }); },
+     X.font='600 13px Outfit'; const tw=X.measureText((got?'✓ ':'')+lab).width+20; X.fillStyle=got?'rgba(16,185,129,.9)':'rgba(11,20,36,.85)'; X.beginPath(); X.roundRect(h.x-tw/2,h.y-h.r-30,tw,22,8); X.fill(); X.fillStyle='#fff'; X.textAlign='center'; X.fillText((got?'✓ ':'')+lab,h.x,h.y-h.r-14); X.textAlign='left'; }); },
  desk(t){ const d=S.case.desk; X.fillStyle='#2A1E14'; X.fillRect(0,0,W,H); const g=X.createRadialGradient(640,300,40,640,300,700); g.addColorStop(0,'rgba(253,190,90,.35)'); g.addColorStop(1,'rgba(0,0,0,0)'); X.fillStyle=g; X.fillRect(0,0,W,H);
    X.fillStyle='#5A3E26'; X.fillRect(0,420,W,300);
    X.save(); X.translate(400,110); X.rotate(-.04); X.fillStyle='#F7F3E8'; X.fillRect(0,0,460,310); X.fillStyle='#0D3E7A'; X.fillRect(0,0,460,44); X.fillStyle='#fff'; X.font='700 18px Outfit'; X.fillText(d.title,16,28);
@@ -326,7 +327,7 @@ function drawGrid(t){ const {L,cw,ch,x,y}=gridGeom(); const hour=reduce?12:9+((t
     if(shaded(c,r,hour,L)){ X.fillStyle='rgba(0,0,0,.42)'; X.fillRect(cx+4,cy+4,cw-8,ch-8); } }
   const ox=L.side==='west'? x-110 : x+L.cols*cw+110; X.save(); X.translate(ox,330); X.fillStyle='#1E5B3A'; for(let i=0;i<8;i++){ X.rotate(Math.PI/4); X.beginPath(); X.ellipse(45,0,55,14,0,0,7); X.fill(); } X.restore();
   X.fillStyle='#fff'; X.font='600 17px Outfit'; X.fillText(L.side==='west'?'W ← '+S.case.clues.obst[0]:S.case.clues.obst[0]+' → E',L.side==='west'?40:W-300,460);
-  X.fillStyle='rgba(24,21,20,.8)'; X.beginPath(); X.roundRect(W-270,80,250,90,12); X.fill(); X.fillStyle='#FDA604'; X.font='700 22px Outfit'; const hh=Math.floor(hour), mm=Math.floor((hour-hh)*60); X.fillText('☀ '+(hh>12?hh-12:hh)+':'+String(mm).padStart(2,'0')+(hh>=12?' pm':' am'),W-250,118);
+  X.fillStyle='rgba(9,16,30,.8)'; X.beginPath(); X.roundRect(W-270,80,250,90,12); X.fill(); X.fillStyle='#FDA604'; X.font='700 22px Outfit'; const hh=Math.floor(hour), mm=Math.floor((hour-hh)*60); X.fillText('☀ '+(hh>12?hh-12:hh)+':'+String(mm).padStart(2,'0')+(hh>=12?' pm':' am'),W-250,118);
   X.fillStyle='#fff'; X.font='500 15px Outfit'; X.fillText('Placed: '+RG.sel.size+' / '+L.panels+' '+L.unit+(L.panels>1?'s':''),W-250,150); }
 /* wiring art */
 const WZ={show:null, ok:false};
@@ -335,7 +336,7 @@ function drawWiring(t){ const s=WZ.show; X.fillStyle='#fff'; X.font='700 22px Ou
   const n=Math.min(s.n,18), pw=Math.min(110,(900-20*n)/n+20), gap=pw+16;
   for(let i=0;i<n;i++){ const x=60+i*gap, y=130; X.fillStyle='#2A2624'; X.fillRect(x,y,pw,pw*1.5); X.strokeStyle='#5A7AB8'; X.strokeRect(x,y,pw,pw*1.5); }
   X.fillStyle='#FDA604'; X.font='600 14px Outfit'; X.fillText(s.n+' × '+s.v+' V panels',60,130+pw*1.5+26);
-  X.fillStyle='#E8EDF5'; X.fillRect(1010,140,220,200); X.fillStyle='#1E1B1A'; X.font='700 15px Outfit'; const parts=s.label.split(' · '); parts.forEach((p,i)=>X.fillText(p,1022,176+i*28));
+  X.fillStyle='#E8EDF5'; X.fillRect(1010,140,220,200); X.fillStyle='#0B1424'; X.font='700 15px Outfit'; const parts=s.label.split(' · '); parts.forEach((p,i)=>X.fillText(p,1022,176+i*28));
   if(WZ.ok){ const yy=130+pw*1.5+50; X.strokeStyle='#10B981'; X.lineWidth=4; X.beginPath(); X.moveTo(60+pw/2,yy); X.lineTo(60+(n-1)*gap+pw/2,yy); X.lineTo(1010,yy); X.stroke(); const pulse=(t*300)%(1010-60); X.fillStyle='#FDA604'; X.beginPath(); X.arc(60+pulse,yy,6,0,7); X.fill(); } }
 /* safety hazards */
 const HAZ=[{x:820,y:280,r:60,text:'Worker on the roof edge without a harness or lifeline'},{x:360,y:540,r:70,text:'Ladder not tied off and set too shallow'},{x:980,y:565,r:45,text:'Open DC connector with rain coming'},{x:1150,y:590,r:60,text:'No helmet or insulated gloves near the inverter'}];
@@ -477,9 +478,9 @@ function renderSide(){ const c=S.case, ch=S.chapter;
 SS.onChange(renderSide);
 document.querySelectorAll('.ptabs button').forEach(b=>b.onclick=()=>{ document.querySelectorAll('.ptabs button').forEach(x=>x.setAttribute('aria-selected',x===b)); document.querySelectorAll('.pp').forEach(p=>p.hidden=p.id!=='pp-'+b.dataset.p); });
 function showCert(c){ const k=document.getElementById('certc'), g=k.getContext('2d'); g.fillStyle='#F7F0DC'; g.fillRect(0,0,1200,800); g.strokeStyle='#B8860B'; g.lineWidth=14; g.strokeRect(30,30,1140,740); g.lineWidth=2; g.strokeRect(54,54,1092,692);
-  g.textAlign='center'; g.fillStyle='#1E1B1A'; g.font='700 30px Outfit, sans-serif'; g.font='700 22px Outfit, sans-serif'; g.fillText('SURYA MISSION',600,168); g.font='800 54px Outfit, sans-serif'; g.fillText('Certificate of Completion',600,232);
+  g.textAlign='center'; g.fillStyle='#0B1424'; g.font='700 30px Outfit, sans-serif'; g.font='700 22px Outfit, sans-serif'; g.fillText('SURYA MISSION',600,168); g.font='800 54px Outfit, sans-serif'; g.fillText('Certificate of Completion',600,232);
   g.fillStyle='#3A2E1A'; g.font='400 26px DM Sans, sans-serif'; g.fillText('This certifies that',600,296); g.fillStyle='#B8650B'; g.font='700 62px Outfit, sans-serif'; g.fillText(c.name,600,380);
-  g.fillStyle='#3A2E1A'; g.font='400 26px DM Sans, sans-serif'; g.fillText('playing as '+c.role+', completed',600,432); g.fillStyle='#1E1B1A'; g.font='700 32px Outfit, sans-serif'; g.fillText(c.title,600,486);
+  g.fillStyle='#3A2E1A'; g.font='400 26px DM Sans, sans-serif'; g.fillText('playing as '+c.role+', completed',600,432); g.fillStyle='#0B1424'; g.font='700 32px Outfit, sans-serif'; g.fillText(c.title,600,486);
   g.fillStyle='#3A2E1A'; g.font='400 22px DM Sans, sans-serif'; g.fillText(c.detail||'',600,534); g.fillStyle='#B8860B'; g.font='600 30px Outfit, sans-serif'; g.fillText('★'.repeat(c.stars)+'☆'.repeat(3-c.stars)+'   '+c.score+' Solar Credits',600,600);
   g.fillStyle='#6B5B3A'; g.font='400 19px DM Sans, sans-serif'; g.fillText('Game certificate for learning, not a professional qualification · '+c.date,600,700);
   const seal=()=>{ if(CERT_SUN.naturalWidth) g.drawImage(CERT_SUN,986,580,107,120); if(CERT_LOGO.naturalWidth){ const lw=300, lh=lw*CERT_LOGO.naturalHeight/CERT_LOGO.naturalWidth; g.drawImage(CERT_LOGO,600-lw/2,70,lw,lh); } };
@@ -514,7 +515,7 @@ function thumb(cv,c){ const g=cv.getContext('2d'), w=cv.width, h=cv.height, th=c
   if(m==='fog'){ g.fillStyle='rgba(240,244,248,.45)'; g.fillRect(0,0,w,h); } }
 function renderPick(){ const el=document.getElementById('pick'); const rec=SS.records('mission');
   const head='<div class="eyebrow">Son of Surya presents</div><h1>Surya <em>Mission</em></h1><p class="ss-small">Investigate real-world solar projects, design them, move the crew, keep everyone safe and switch them on. Every case is a different country, climate and client.</p><div class="steps"><span class="'+(PK.step===1?'on':'')+'">1 · Region</span>›<span class="'+(PK.step===2?'on':'')+'">2 · Project</span>›<span class="'+(PK.step===3?'on':'')+'">3 · Role and name</span></div>';
-  if(PK.step===1){ el.innerHTML=head+'<div class="tiles">'+REGIONS.map(([r,col,sub])=>{ const n=CASES.filter(c=>c.region===r).length, done=CASES.filter(c=>c.region===r&&rec[c.id]).length; return '<button class="tile" type="button" data-r="'+r+'"><div class="rg" style="background:linear-gradient(135deg,'+col+',#1E1B1A)"></div><b>'+r+'</b><small>'+sub+'</small><span class="st">'+done+' / '+n+' cases closed</span></button>'; }).join('')+'</div>';
+  if(PK.step===1){ el.innerHTML=head+'<div class="tiles">'+REGIONS.map(([r,col,sub])=>{ const n=CASES.filter(c=>c.region===r).length, done=CASES.filter(c=>c.region===r&&rec[c.id]).length; return '<button class="tile" type="button" data-r="'+r+'"><div class="rg" style="background:linear-gradient(135deg,'+col+',#0B1424)"></div><b>'+r+'</b><small>'+sub+'</small><span class="st">'+done+' / '+n+' cases closed</span></button>'; }).join('')+'</div>';
     el.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{ sfx.click(); PK.region=b.dataset.r; PK.step=2; renderPick(); }); }
   else if(PK.step===2){ const list=CASES.filter(c=>c.region===PK.region); el.innerHTML=head+'<div class="tiles">'+list.map(c=>{ const r=rec[c.id]; const fl=((window.SM_FLOW||{})[c.kind]||[]).map(f=>f[1]); const tw=(window.SM_TWIST||{})[c.id]; return '<button class="tile case" type="button" data-c="'+c.id+'"><canvas class="thumb" width="320" height="150" data-th="'+c.id+'"></canvas><b>'+SS.esc(c.title)+'</b><small>'+SS.esc(c.place)+'</small><small>'+SS.esc(c.type)+' · '+c.level+'</small>'+(tw?'<small class="tw">Story: '+SS.esc(tw[0])+'</small>':'')+'<small class="fl">'+SS.esc(fl.slice(0,3).join(' → '))+' …</small><span class="st">'+(r?'★'.repeat(r.stars)+' best '+r.score:'New case')+'</span></button>'; }).join('')+'</div><button class="ss-btn alt sm" type="button" id="back" style="margin-top:12px">← Regions</button>';
     el.querySelectorAll('canvas[data-th]').forEach(cv=>thumb(cv,CASES.find(k=>k.id===cv.dataset.th))); el.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{ sfx.click(); PK.caseId=b.dataset.c; S.case=CASES.find(c=>c.id===PK.caseId); PK.step=3; renderPick(); renderSide(); }); document.getElementById('back').onclick=()=>{ PK.step=1; renderPick(); }; }

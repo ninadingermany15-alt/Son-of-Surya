@@ -5,14 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Gadget Guru</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/fonts/fonts.css">
 <link rel="stylesheet" href="shared.css">
+<script src="sfx.js" defer></script>
 <style>
 .gg{display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:14px; padding-block:14px}
 @media (max-width:900px){ .gg{grid-template-columns:minmax(0,1fr)} }
 .scene{position:relative; border-radius:18px; overflow:hidden; background:#000; aspect-ratio:16/10; max-width:100%}
 .scene canvas{position:absolute; inset:0; width:100%; height:100%}
-.brief{position:absolute; left:12px; right:12px; bottom:12px; background:rgba(24,21,20,.9); border:1px solid var(--line); border-radius:14px; padding:12px 14px}
+.brief{position:absolute; left:12px; right:12px; bottom:12px; background:rgba(9,16,30,.9); border:1px solid var(--line); border-radius:14px; padding:12px 14px}
 .brief h2{margin:0; font:800 20px var(--display)} .brief h2 em{font-style:normal; color:var(--sun)}
 .brief p{margin:4px 0 0; color:var(--muted); font-size:15px}
 .facts{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px}
@@ -22,7 +23,7 @@
 .step{font:700 18px var(--display); margin:10px 0 2px}
 .step small{display:block; color:var(--muted); font:500 14px var(--body)}
 .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; margin-top:12px}
-.card{all:unset; cursor:pointer; background:linear-gradient(180deg,#2A2522,#0F1D38); border:2px solid var(--line); border-radius:14px; padding:10px; display:grid; gap:6px; transition:transform .15s, border-color .15s}
+.card{all:unset; cursor:pointer; background:linear-gradient(180deg,#13213A,#0F1D38); border:2px solid var(--line); border-radius:14px; padding:10px; display:grid; gap:6px; transition:transform .15s, border-color .15s}
 .card:hover{transform:translateY(-3px); border-color:var(--sun)} .card:focus-visible{outline:3px solid #fff}
 .card canvas{width:100%; height:auto; aspect-ratio:34/22; border-radius:10px; background:radial-gradient(circle at 50% 40%, #3A3330, #0B1730)}
 .card b{font:700 14px var(--display); line-height:1.3}
