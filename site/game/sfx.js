@@ -145,13 +145,12 @@ function installSfx() {
     if (t?.closest?.(CLICKABLE) || t?.closest?.('input, textarea, canvas, [data-sfx="off"]')) return;
     if (ctx?.state !== 'running') setTimeout(() => play.tap(), 40); else play.tap();
   }, { capture: true, passive: true });
-  // scrolling: a swoosh when a scroll starts, then light ticks while it continues
-  let lastY = window.scrollY, lastT = 0, idleTimer = 0, moving = false, lastTick = 0;
+  // scrolling: one soft swoosh when a scroll starts (no ticks while it continues)
+  let lastY = window.scrollY, idleTimer = 0, moving = false;
   window.addEventListener('scroll', () => {
-    const now = performance.now(), y = window.scrollY, dy = y - lastY, dt = Math.max(16, now - lastT);
-    lastY = y; lastT = now;
+    const y = window.scrollY, dy = y - lastY;
+    lastY = y;
     if (!moving) { moving = true; play.swoosh(dy >= 0); }
-    else if (now - lastTick > 160) { lastTick = now; play.scrollTick(Math.abs(dy) / dt / 3); }
     clearTimeout(idleTimer); idleTimer = window.setTimeout(() => { moving = false; }, 380);
   }, { passive: true });
   document.addEventListener('click', (e) => {
