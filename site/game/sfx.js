@@ -86,9 +86,9 @@ const play = {
   /** soft HUD tick when the pointer reaches something clickable */
   hover() { const n = performance.now(); if (n - lastHover < 70) return; lastHover = n; tone('triangle', 2200, 3100, 0.045, 0.025); },
   /** energy blip on click */
-  click() { tone('sine', 520, 1560, 0.09, 0.11, { wet: 0.25 }); tone('square', 140, 90, 0.06, 0.03); },
+  click() { tone('sine', 520, 1560, 0.09, 0.14, { wet: 0.25 }); tone('square', 140, 90, 0.06, 0.035); },
   /** page change: a hero-landing whoosh with a low thud */
-  whoosh() { noise(0.42, 0.12, 260, 3200, { wet: 0.4 }); tone('sine', 95, 42, 0.38, 0.14, { delay: 0.05 }); },
+  whoosh() { noise(0.42, 0.07, 260, 3200, { wet: 0.4 }); tone('sine', 95, 42, 0.38, 0.09, { delay: 0.05 }); },
   /** charging power-up, ends on a bright chime */
   powerUp() {
     tone('sawtooth', 110, 440, 0.62, 0.05, { filter: [300, 4200], attack: 0.2 });
@@ -106,17 +106,17 @@ const play = {
   toggle(on) { tone('sine', on ? 600 : 900, on ? 1200 : 450, 0.12, 0.08, { wet: 0.3 }); },
   /** ignition when the home story starts moving: low rumble rising into a bright shimmer */
   ignite() {
-    tone('sawtooth', 55, 220, 1.1, 0.06, { filter: [180, 2400], attack: 0.35 });
-    tone('sine', 82, 330, 1.1, 0.08, { attack: 0.3, wet: 0.4 });
-    noise(1.0, 0.06, 300, 6000, { wet: 0.6, q: 0.7 });
+    tone('sawtooth', 55, 220, 1.1, 0.04, { filter: [180, 2400], attack: 0.35 });
+    tone('sine', 82, 330, 1.1, 0.055, { attack: 0.3, wet: 0.4 });
+    noise(1.0, 0.04, 300, 6000, { wet: 0.6, q: 0.7 });
     tone('sine', 1760, 1760, 1.4, 0.03, { delay: 0.9, wet: 0.8 });
   },
   /** a scroll gesture begins: an airy swoosh, higher going down the page, lower going up */
-  swoosh(down) { noise(0.28, 0.045, down ? 600 : 2600, down ? 2600 : 600, { wet: 0.3, q: 1.8 }); },
+  swoosh(down) { noise(0.3, 0.38, down ? 500 : 2400, down ? 2400 : 500, { wet: 0.3, q: 0.9 }); },
   /** soft HUD tick while scrolling keeps going */
-  scrollTick(speed) { const f = 900 + Math.min(1, speed) * 900; tone('triangle', f, f * 1.15, 0.03, 0.012 + Math.min(1, speed) * 0.012); },
+  scrollTick(speed) { const f = 900 + Math.min(1, speed) * 900; tone('triangle', f, f * 1.15, 0.04, 0.085 + Math.min(1, speed) * 0.04); },
   /** tap on an empty part of the page */
-  tap() { tone('sine', 1300, 900, 0.05, 0.03, { wet: 0.2 }); },
+  tap() { tone('sine', 1300, 900, 0.07, 0.16, { wet: 0.2 }); },
 };
 
 const CLICKABLE = 'a[href], button, [role="button"], [role="tab"], [role="radio"], summary, input[type="checkbox"], input[type="radio"], select, label[for]';
