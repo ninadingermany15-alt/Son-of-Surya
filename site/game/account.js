@@ -68,7 +68,7 @@
     toast(msg){ let t=document.querySelector('.ss-toast'); if(!t){ t=document.createElement('div'); t.className='ss-toast'; t.setAttribute('role','status'); document.body.appendChild(t);} t.textContent=msg; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2600); },
     esc,
     mountHeader(active){
-      const links=[['index.html','Games','hub'],['mission.html','Surya Mission','mission'],['yoddha.html','Yoddha 3D','run'],['quiz.html','Solar Hero Quiz','quiz'],['gadget.html','Gadget Guru','gadget'],['build.html','Abhi Thik Karke Deta Hu','build']];
+      const links=[['index.html','Games','hub'],['/universe','Solar Energy Universe','universe'],['mission.html','Surya Mission','mission'],['quiz.html','Solar Hero Quiz','quiz']];
       const h=document.createElement('header'); h.className='ss-head';
       h.innerHTML='<div class="ss-wrap ss-bar"><a class="ss-logo" href="/" title="Back to sonofsurya.com">'+LOGO+'<small>Games</small></a><nav class="ss-nav" aria-label="Games">'+links.map(l=>'<a href="'+l[0]+'"'+(l[2]===active?' aria-current="page"':'')+'>'+l[1]+'</a>').join('')+'</nav><div class="ss-user" id="ss-user"></div></div>';
       document.body.prepend(h);
