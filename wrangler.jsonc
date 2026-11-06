@@ -4,8 +4,8 @@
   "compatibility_date": "2026-10-01",
   "assets": {
     "directory": "./site",
-    // /about serves about.html, unknown pages get 404.html
+    // Coming-soon mode: every address shows index.html. Restore the full site from tag full-site-2026-11-06.
     "html_handling": "auto-trailing-slash",
-    "not_found_handling": "404-page"
+    "not_found_handling": "single-page-application"
   }
 }

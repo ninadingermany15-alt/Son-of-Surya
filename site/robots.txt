@@ -1,8 +1,2 @@
 User-agent: *
-Allow: /
-Disallow: /checkout
-Disallow: /subscribe
-Disallow: /proposal
-Disallow: /studio-admin
-
-Sitemap: https://sonofsurya.com/sitemap.xml
+Disallow: /
